@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AURA RNG</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050508;--panel:#09091a;--panel2:#0d0d20;--border:#1a1a35;--text:#e8e0ff;--muted:#5a5480;--gold:#f0c060;--glow:#8060ff;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) ease-in-out infinite var(--del,0s);}
+@keyframes twinkle{0%,100%{opacity:var(--min,.1);transform:scale(1);}50%{opacity:var(--max,.8);transform:scale(1.2);}}
+.container{position:relative;z-index:1;width:100%;max-width:1000px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:14px;}
+header{text-align:center;padding:20px 0 2px;}
+header h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:900;background:linear-gradient(135deg,#c8a0ff,#f0c060,#c8a0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 18px #8060ff88);animation:shimmer 4s linear infinite;background-size:200% 200%;}
+@keyframes shimmer{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+header p{color:var(--muted);font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;margin-top:4px;font-family:'Cinzel',serif;}
+.tokens-bar{display:flex;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:7px 18px;font-family:'Cinzel',serif;font-size:.78rem;flex-wrap:wrap;justify-content:center;}
+.tokens-bar .tk{color:var(--gold);font-weight:700;font-size:1rem;margin-left:3px;}
+.stats-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%;}
+.stat-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:7px 14px;text-align:center;flex:1;min-width:90px;display:flex;flex-direction:column;justify-content:center;}
+.stat-box .label{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-family:'Cinzel',serif;}
+.stat-box .value{font-size:1.1rem;font-weight:700;color:var(--gold);margin-top:1px;}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:4px;width:100%;}
+.tab-btn{flex:1;background:transparent;border:none;color:var(--muted);font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.08em;padding:7px 4px;border-radius:8px;cursor:pointer;text-transform:uppercase;transition:all .2s;}
+.tab-btn.active{background:var(--panel2);color:var(--text);box-shadow:0 0 10px #8060ff22;}
+.tab-btn:hover:not(.active){color:var(--text);}
+.tab-panel{display:none;width:100%;}
+.tab-panel.active{display:block;}
+.arena{width:100%;background:linear-gradient(135deg,#080814,#0b0818);border:1px solid var(--border);border-radius:20px;padding:28px 16px;display:flex;flex-direction:column;align-items:center;gap:18px;position:relative;overflow:hidden;}
+.arena::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,#8060ff12,transparent 70%);pointer-events:none;}
+.arena-flash{position:absolute;inset:0;z-index:10;border-radius:20px;pointer-events:none;opacity:0;}
+.particle-field{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;pointer-events:none;animation:float-up var(--dur) ease-out forwards;}
+@keyframes float-up{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;}}
+.aura-ring{width:170px;height:170px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s;}
+.aura-ring:active{transform:scale(.96);}
+.ring-outer{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;background:conic-gradient(from 0deg,#8060ff,transparent,#8060ff) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;animation:spin 4s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ring-inner{position:absolute;inset:8px;border-radius:50%;background:radial-gradient(circle,#3020a0 0%,#05050a 70%);box-shadow:0 0 40px #8060ff88 inset,0 0 60px #8060ff44;display:flex;align-items:center;justify-content:center;font-size:3.2rem;transition:all .3s;}
+.aura-name{font-family:'Cinzel Decorative',serif;font-size:1.1rem;font-weight:700;color:#8060ff;text-align:center;min-height:1.6rem;transition:all .3s;}
+.aura-rarity{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:3px;text-align:center;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.roll-btn{position:relative;background:linear-gradient(135deg,#2a1a50,#1a0a30);border:1px solid #5040a0;color:var(--text);font-family:'Cinzel',serif;font-size:.9rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:12px 36px;border-radius:50px;cursor:pointer;transition:all .2s;overflow:hidden;}
+.roll-btn:hover{border-color:#8060ff;box-shadow:0 0 20px #8060ff44;}
+.roll-btn:active{transform:scale(.97);}
+.roll-btn.rolling{animation:pulse-btn .3s ease-out;}
+@keyframes pulse-btn{0%{box-shadow:0 0 0 0 #8060ff88;}100%{box-shadow:0 0 0 20px #8060ff00;}}
+.auto-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:.78rem;letter-spacing:.1em;padding:7px 16px;border-radius:50px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.auto-btn:hover{border-color:var(--muted);color:var(--text);}
+.auto-btn.active{border-color:#60ffa0;color:#60ffa0;box-shadow:0 0 10px #60ffa044;}
+.equipped-display{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;min-height:34px;}
+.eq-slot{width:34px;height:34px;border-radius:8px;border:1px dashed #2a2a4a;display:flex;align-items:center;justify-content:center;font-size:1.2rem;position:relative;cursor:default;}
+.eq-slot.filled{border-style:solid;border-color:var(--ec,#5040a0);box-shadow:0 0 8px var(--ec,#5040a0)44;background:var(--ec,#5040a0)11;}
+.eq-slot .eq-tip{position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:#111128;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.62rem;white-space:nowrap;color:var(--text);pointer-events:none;opacity:0;transition:opacity .2s;font-family:'Cinzel',serif;z-index:20;}
+.eq-slot:hover .eq-tip{opacity:1;}
+.section-title{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:7px;}
+.inv-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 7px;text-align:center;position:relative;overflow:hidden;transition:all .2s;}
+.inv-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--c) 0%,transparent 70%);opacity:.07;}
+.inv-card:hover{border-color:var(--c);transform:translateY(-2px);box-shadow:0 4px 14px var(--c2);}
+.inv-card .ic-emoji{font-size:1.5rem;margin-bottom:2px;}
+.inv-card .ic-name{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.03em;color:var(--c);}
+.inv-card .ic-count{position:absolute;top:4px;right:6px;font-size:.65rem;font-weight:700;color:var(--muted);}
+.inv-card .ic-rarity{font-size:.52rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:1px;}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+.shop-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:13px;position:relative;overflow:hidden;transition:all .2s;}
+.shop-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--ec,#8060ff) 0%,transparent 60%);opacity:.05;pointer-events:none;}
+.shop-card:hover{border-color:var(--ec,#8060ff);box-shadow:0 4px 18px var(--ec,#8060ff)22;}
+.shop-card .sc-top{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.shop-card .sc-icon{font-size:1.9rem;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--ec,#8060ff)22;border-radius:10px;border:1px solid var(--ec,#8060ff)44;flex-shrink:0;}
+.shop-card .sc-name{font-family:'Cinzel',serif;font-size:.8rem;color:var(--text);font-weight:700;}
+.shop-card .sc-type{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.shop-card .sc-desc{font-size:.74rem;color:var(--muted);line-height:1.45;margin-bottom:8px;}
+.shop-card .sc-bonus{font-size:.74rem;color:var(--ec,#8060ff);font-weight:600;margin-bottom:8px;}
+.shop-card .sc-footer{display:flex;align-items:center;justify-content:space-between;}
+.shop-card .sc-price{font-size:.8rem;color:var(--gold);font-weight:700;font-family:'Cinzel',serif;}
+.sc-buy-btn{background:var(--ec,#8060ff)33;border:1px solid var(--ec,#8060ff)88;color:var(--text);font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.07em;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.sc-buy-btn:hover:not(:disabled){background:var(--ec,#8060ff)66;box-shadow:0 0 10px var(--ec,#8060ff)44;}
+.sc-buy-btn:disabled{opacity:.35;cursor:not-allowed;}
+.sc-buy-btn.owned{background:#60ffa022;border-color:#60ffa066;color:#60ffa0;}
+.sc-buy-btn.equipped-btn{background:#ff806022;border-color:#ff806066;color:#ff8060;}
+.log-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 13px;height:95px;overflow-y:auto;font-size:.75rem;line-height:1.8;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.log-entry{display:flex;gap:7px;align-items:baseline;}
+.log-time{color:var(--muted);font-size:.62rem;flex-shrink:0;}
+.lucky-overlay{position:fixed;inset:0;z-index:100;background:#000000cc;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.lucky-overlay.show{opacity:1;pointer-events:all;}
+.lucky-card{background:linear-gradient(135deg,#0d0a1a,#1a0d30);border:1px solid var(--aura-color,#8060ff);border-radius:20px;padding:36px 28px;text-align:center;box-shadow:0 0 80px var(--aura-glow,#8060ff66);animation:pop-in .4s cubic-bezier(.34,1.56,.64,1) both;max-width:300px;width:90%;}
+@keyframes pop-in{from{transform:scale(.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+.lucky-emoji{font-size:4rem;margin-bottom:10px;display:block;animation:float 2s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.lucky-title{font-family:'Cinzel Decorative',serif;font-size:1.5rem;font-weight:900;color:var(--aura-color,#8060ff);margin-bottom:4px;}
+.lucky-rarity{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.lucky-token-reward{font-size:.85rem;color:var(--gold);margin-bottom:14px;font-family:'Cinzel',serif;}
+.lucky-dismiss{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:.78rem;letter-spacing:.1em;padding:8px 22px;border-radius:50px;cursor:pointer;text-transform:uppercase;transition:all .2s;}
+.lucky-dismiss:hover{border-color:var(--muted);color:var(--text);}
+/* FX */
+@keyframes ring-pulse{0%,100%{box-shadow:0 0 40px var(--aura-glow) inset,0 0 60px var(--aura-glow);}50%{box-shadow:0 0 80px var(--aura-glow) inset,0 0 120px var(--aura-glow);}}
+.ringing .ring-inner{animation:ring-pulse 1s ease-in-out infinite;}
+.fx-rare .aura-ring{animation:wobble .6s ease-out;}
+@keyframes wobble{0%{transform:scale(1) rotate(0);}25%{transform:scale(1.08) rotate(-4deg);}50%{transform:scale(1.05) rotate(4deg);}75%{transform:scale(1.02) rotate(-2deg);}100%{transform:scale(1) rotate(0);}}
+.fx-epic .aura-ring{animation:bounce-in .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes bounce-in{0%{transform:scale(.7);}100%{transform:scale(1);}}
+.fx-legendary .ring-outer{animation:spin .4s linear infinite!important;}
+.fx-legendary .aura-ring{animation:shake .5s ease-out;}
+@keyframes shake{0%,100%{transform:translateX(0);}15%{transform:translateX(-8px) rotate(-3deg);}30%{transform:translateX(8px) rotate(3deg);}45%{transform:translateX(-6px);}60%{transform:translateX(6px);}75%{transform:translateX(-3px);}}
+.fx-divine .aura-ring{animation:divine-spin 1s cubic-bezier(.2,1.4,.6,1);}
+@keyframes divine-spin{0%{transform:scale(0) rotate(-360deg);}100%{transform:scale(1) rotate(0);}}
+.fx-godly .aura-ring{animation:godly-reveal 1.2s cubic-bezier(.2,1.6,.4,1);}
+@keyframes godly-reveal{0%{transform:scale(0) rotate(-720deg);filter:brightness(5);}70%{transform:scale(1.15) rotate(10deg);filter:brightness(2);}100%{transform:scale(1) rotate(0);filter:brightness(1);}}
+.fx-secret .aura-ring{animation:secret-phase 1.5s ease-in-out;}
+@keyframes secret-phase{0%{opacity:0;transform:scale(2);}30%{opacity:1;}100%{transform:scale(1);}}
+.fx-prismatic .ring-outer{animation:spin .18s linear infinite!important;}
+.fx-prismatic .aura-ring{animation:prismatic-burst 1s cubic-bezier(.2,1.8,.4,1);}
+@keyframes prismatic-burst{0%{transform:scale(0);filter:hue-rotate(0deg) brightness(5);}50%{transform:scale(1.3);filter:hue-rotate(180deg) brightness(3);}100%{transform:scale(1);filter:hue-rotate(360deg) brightness(1);}}
+.fx-transcendent .aura-ring{animation:transcend 1.5s ease-out;}
+@keyframes transcend{0%{transform:scale(0) rotate(-1080deg);filter:brightness(8) saturate(0);}60%{transform:scale(1.2);filter:brightness(3) saturate(2);}100%{transform:scale(1);filter:brightness(1) saturate(1);}}
+.fx-null .aura-ring{animation:null-phase 1.2s ease-out;}
+@keyframes null-phase{0%{opacity:1;transform:scale(1);filter:invert(1);}20%{opacity:0;}50%{opacity:0;transform:scale(3);}80%{opacity:1;transform:scale(.9);filter:invert(0);}100%{transform:scale(1);}}
+@keyframes arena-flash-std{0%{opacity:.6;}100%{opacity:0;}}
+.divine-wipe{position:fixed;inset:0;z-index:50;transform-origin:left center;transform:scaleX(0);pointer-events:none;opacity:0;}
+@keyframes divine-wipe{0%{transform:scaleX(0);opacity:1;}50%{transform:scaleX(1);opacity:1;}100%{transform:scaleX(1);opacity:0;}}
+.lightning{position:absolute;width:2px;background:linear-gradient(to bottom,transparent,var(--lc,#fff),transparent);transform-origin:top center;pointer-events:none;animation:lightning-flash var(--ld,.15s) ease-out forwards var(--ldel,0s);opacity:0;}
+@keyframes lightning-flash{0%{opacity:0;transform:scaleY(0) rotate(var(--lrot,0deg));}30%{opacity:1;transform:scaleY(1) rotate(var(--lrot,0deg));}100%{opacity:0;transform:scaleY(1) rotate(var(--lrot,0deg));}}
+.crown-rain{position:fixed;z-index:60;font-size:1.4rem;pointer-events:none;animation:crown-fall var(--cd,2s) ease-in forwards var(--cdel,0s);opacity:0;}
+@keyframes crown-fall{0%{transform:translateY(-20px) rotate(var(--cr,0deg));opacity:1;}80%{opacity:1;}100%{transform:translateY(110vh) rotate(calc(var(--cr,0deg)+360deg));opacity:0;}}
+.null-void{position:fixed;inset:0;z-index:55;background:radial-gradient(circle,#000 0%,transparent 70%);pointer-events:none;opacity:0;animation:null-void-anim 2.5s ease-out forwards;}
+@keyframes null-void-anim{0%{opacity:0;}20%{opacity:.95;}100%{opacity:0;}}
+.prismatic-bg{position:fixed;inset:0;z-index:45;pointer-events:none;opacity:0;animation:prism-bg 2s ease-out forwards;}
+@keyframes prism-bg{0%{opacity:0;}15%{opacity:.25;}100%{opacity:0;}}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:9px 18px;font-family:'Cinzel',serif;font-size:.75rem;color:var(--text);z-index:200;transition:transform .3s,opacity .3s;opacity:0;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+@media(max-width:600px){
+  .shop-grid{grid-template-columns:1fr;}
+  .inv-grid{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));}
+  .tabs .tab-btn{font-size:.62rem;padding:6px 2px;letter-spacing:.02em;}
+  .roll-btn{padding:16px 30px;font-size:.9rem;}
+  .aura-ring{width:148px;height:148px;}
+  .ring-inner{font-size:2.8rem;}
+  header h1{font-size:clamp(1.5rem,7vw,2.2rem);}
+  .tokens-bar{gap:8px;font-size:.7rem;padding:5px 10px;}
+  .sc-buy-btn{padding:8px 14px;font-size:.68rem;min-height:36px;}
+  #equip-slots{grid-template-columns:1fr 1fr!important;}
+}
+.roll-btn,.auto-btn,.aura-ring,.sc-buy-btn{-webkit-user-select:none;user-select:none;touch-action:manipulation;}
+.container{padding-bottom:max(16px,env(safe-area-inset-bottom));}
+
+/* ══════════ CUTSCENE ══════════ */
+.cutscene{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;}
+.cutscene.active{pointer-events:all;opacity:1;}
+
+/* Backdrop layers */
+.cs-bg{position:absolute;inset:0;background:#000;opacity:0;transition:opacity .4s;}
+.cs-rays{position:absolute;inset:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent 0deg,var(--cr,#8060ff22) 4deg,transparent 8deg,transparent 20deg,var(--cr,#8060ff22) 24deg,transparent 28deg);animation:cs-spin 8s linear infinite;opacity:0;pointer-events:none;}
+@keyframes cs-spin{to{transform:rotate(360deg);}}
+.cs-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 30%,#000c 100%);pointer-events:none;}
+
+/* Center stage */
+.cs-stage{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0;text-align:center;}
+.cs-ring-wrap{position:relative;width:240px;height:240px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;}
+.cs-ring-outer{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;background:conic-gradient(from 0deg,var(--cc,#8060ff),transparent,var(--cc,#8060ff)) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;}
+.cs-ring-outer2{position:absolute;inset:12px;border-radius:50%;border:1px solid var(--cc,#8060ff);opacity:.4;}
+.cs-ring-inner{position:absolute;inset:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5rem;background:radial-gradient(circle,var(--cc2,#3020a0) 0%,#03030a 70%);}
+.cs-particles{position:absolute;inset:0;pointer-events:none;border-radius:50%;overflow:visible;}
+
+/* Text */
+.cs-label{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.35em;text-transform:uppercase;color:var(--cc,#8060ff);opacity:.8;margin-bottom:8px;}
+.cs-name{font-family:'Cinzel Decorative',serif;font-size:clamp(1.6rem,5vw,3rem);font-weight:900;color:var(--cc,#8060ff);text-shadow:0 0 40px var(--cc,#8060ff);line-height:1.1;margin-bottom:6px;}
+.cs-rarity-badge{display:inline-block;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--cc,#8060ff);border-radius:20px;padding:3px 14px;color:var(--cc,#8060ff);margin-bottom:10px;background:var(--cc,#8060ff)15;}
+.cs-odds{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.12em;color:var(--muted);margin-bottom:28px;}
+.cs-close{background:transparent;border:1px solid #ffffff33;color:#ffffff88;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.15em;padding:10px 30px;border-radius:50px;cursor:pointer;text-transform:uppercase;transition:all .25s;touch-action:manipulation;-webkit-user-select:none;user-select:none;}
+.cs-close:hover{border-color:#fff6;color:#fff;box-shadow:0 0 20px #ffffff22;}
+
+/* Tier-specific ring animations */
+.cs-ring-wrap.t0 .cs-ring-outer{animation:spin 6s linear infinite;}
+.cs-ring-wrap.t1 .cs-ring-outer{animation:spin 4s linear infinite;}
+.cs-ring-wrap.t2 .cs-ring-outer{animation:spin 2.5s linear infinite;}
+.cs-ring-wrap.t2 .cs-ring-outer2{animation:spin 4s linear infinite reverse;}
+.cs-ring-wrap.t3 .cs-ring-outer{animation:spin 1.5s linear infinite;}
+.cs-ring-wrap.t3 .cs-ring-outer2{animation:spin 2s linear infinite reverse;opacity:.7;}
+.cs-ring-wrap.t4 .cs-ring-outer{animation:spin .8s linear infinite;}
+.cs-ring-wrap.t4 .cs-ring-outer2{animation:spin 1.2s linear infinite reverse;opacity:.9;}
+.cs-ring-wrap.t5 .cs-ring-outer{animation:spin .5s linear infinite;}
+.cs-ring-wrap.t5 .cs-ring-outer2{animation:spin .7s linear infinite reverse;opacity:1;}
+.cs-ring-wrap.t6 .cs-ring-outer{animation:spin .3s linear infinite;}
+.cs-ring-wrap.t6 .cs-ring-inner{animation:cs-godly-pulse 1.2s ease-in-out infinite;}
+@keyframes cs-godly-pulse{0%,100%{box-shadow:0 0 60px var(--cc) inset,0 0 100px var(--cc),0 0 200px var(--cc);}50%{box-shadow:0 0 100px var(--cc) inset,0 0 160px var(--cc),0 0 300px var(--cc);}}
+.cs-ring-wrap.t7 .cs-ring-outer{animation:spin 2s linear infinite;filter:hue-rotate(0deg);animation:spin 2s linear infinite,cs-hue 4s linear infinite;}
+@keyframes cs-hue{to{filter:hue-rotate(360deg);}}
+.cs-ring-wrap.t8 .cs-ring-inner{animation:cs-cursed-flicker .15s steps(1) infinite;}
+@keyframes cs-cursed-flicker{0%{opacity:1;}50%{opacity:.7;}}
+.cs-ring-wrap.t9 .cs-ring-outer{animation:spin .15s linear infinite;}
+.cs-ring-wrap.t9 .cs-ring-inner{animation:cs-prismatic 2s linear infinite;}
+@keyframes cs-prismatic{to{filter:hue-rotate(360deg);}}
+.cs-ring-wrap.t10 .cs-ring-outer{animation:spin .08s linear infinite;}
+.cs-ring-wrap.t10 .cs-ring-inner{animation:cs-prismatic .8s linear infinite,cs-transcend-scale 2s ease-in-out infinite;}
+@keyframes cs-transcend-scale{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+.cs-ring-wrap.t11 .cs-ring-outer{animation:cs-null-outer 3s ease-in-out infinite;}
+@keyframes cs-null-outer{0%,100%{opacity:0;transform:scale(1);}50%{opacity:1;transform:scale(1.05);}}
+.cs-ring-wrap.t11 .cs-ring-inner{animation:cs-null-pulse 3s ease-in-out infinite;}
+@keyframes cs-null-pulse{0%,100%{filter:invert(0) brightness(1);}50%{filter:invert(.3) brightness(1.5);}}
+
+/* Entry animations for the whole stage */
+.cs-stage{transform:scale(.7) translateY(40px);opacity:0;transition:transform .5s cubic-bezier(.2,1.4,.4,1),opacity .4s;}
+.cutscene.active .cs-stage{transform:scale(1) translateY(0);opacity:1;}
+
+/* Special overlays per tier */
+.cs-scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,#00000018 2px,#00000018 4px);pointer-events:none;z-index:3;}
+.cs-glitch{position:absolute;inset:0;pointer-events:none;z-index:4;}
+.cs-glitch-bar{position:absolute;left:0;right:0;height:3px;background:var(--cc,#8060ff);opacity:0;animation:cs-glitch-anim var(--gd,2s) ease-out infinite var(--gdel,0s);}
+@keyframes cs-glitch-anim{0%,90%{opacity:0;transform:scaleX(0);}91%{opacity:.8;transform:scaleX(1);top:var(--gt,40%);}95%{opacity:0;}100%{opacity:0;}}
+
+/* Rarity-specific bg atmospheres */
+.cs-atmosphere{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1s;}
+.cutscene.active .cs-atmosphere{opacity:1;}
+
+/* inv-card replay button */
+.inv-card .ic-replay{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);background:var(--c,#8060ff)22;border:1px solid var(--c,#8060ff)66;color:var(--c,#8060ff);font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.08em;padding:2px 8px;border-radius:8px;cursor:pointer;opacity:0;transition:opacity .2s;text-transform:uppercase;white-space:nowrap;touch-action:manipulation;}
+.inv-card:hover .ic-replay{opacity:1;}@media(max-width:700px){.ic-replay{opacity:.7!important;}}
+.inv-card{padding-bottom:22px;}
+
+/* Orbit particles in cutscene */
+.cs-orbit-particle{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--cc,#8060ff);box-shadow:0 0 8px var(--cc,#8060ff);animation:cs-orbit var(--od,3s) linear infinite var(--odel,0s);}
+@keyframes cs-orbit{from{transform:rotate(var(--oa,0deg)) translateX(var(--or,120px)) rotate(calc(-1*var(--oa,0deg)));}to{transform:rotate(calc(var(--oa,0deg)+360deg)) translateX(var(--or,120px)) rotate(calc(-1*(var(--oa,0deg)+360deg)));}}
+
+
+.cs-ring-wrap.t12 .cs-ring-outer{animation:spin .06s linear infinite;}
+.cs-ring-wrap.t12 .cs-ring-inner{animation:cs-omega-pulse .4s ease-in-out infinite;}
+@keyframes cs-omega-pulse{0%,100%{box-shadow:0 0 80px #ff2080 inset,0 0 140px #ff2080,0 0 240px #ff2080;filter:brightness(1);}50%{box-shadow:0 0 120px #ff2080 inset,0 0 200px #ff2080,0 0 350px #ff2080;filter:brightness(1.4);}}
+
+.cs-ring-wrap.t13 .cs-ring-outer{animation:spin .04s linear infinite;}
+.cs-ring-wrap.t13 .cs-ring-outer2{animation:spin .06s linear infinite reverse;opacity:1;}
+.cs-ring-wrap.t13 .cs-ring-inner{animation:cs-eternal-shimmer 1s linear infinite;}
+@keyframes cs-eternal-shimmer{0%{filter:hue-rotate(0deg) brightness(1.5);}100%{filter:hue-rotate(360deg) brightness(1.5);}}
+
+.cs-ring-wrap.t14 .cs-ring-outer{animation:cs-genesis-outer 2s ease-in-out infinite;}
+@keyframes cs-genesis-outer{0%,100%{transform:rotate(0deg) scale(1);}50%{transform:rotate(180deg) scale(1.08);}}
+.cs-ring-wrap.t14 .cs-ring-outer2{animation:cs-genesis-outer2 1.5s ease-in-out infinite reverse;}
+@keyframes cs-genesis-outer2{0%,100%{transform:rotate(0deg) scale(1);opacity:1;}50%{transform:rotate(-180deg) scale(1.12);opacity:.6;}}
+.cs-ring-wrap.t14 .cs-ring-inner{animation:cs-genesis-core 1.5s linear infinite;}
+@keyframes cs-genesis-core{0%{filter:hue-rotate(0deg) brightness(2) saturate(2);transform:scale(1);}50%{filter:hue-rotate(180deg) brightness(3) saturate(3);transform:scale(1.06);}100%{filter:hue-rotate(360deg) brightness(2) saturate(2);transform:scale(1);}}
+
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div class="divine-wipe" id="divine-wipe"></div>
+<div class="toast" id="toast"></div>
+
+<div class="container">
+  <header>
+    <h1>AURA RNG</h1>
+    <p>Fate is never in your hands</p>
+  </header>
+
+  <div class="tokens-bar">
+    🪙 Tokens: <span class="tk" id="token-count">0</span>
+    &nbsp;|&nbsp;
+    ⚡ Speed: <span class="tk" id="speed-display">400ms</span>
+    &nbsp;|&nbsp;
+    🍀 Luck: <span class="tk" id="luck-display">1.0×</span>
+  &nbsp;<button onclick="saveGame()" style="background:transparent;border:1px solid #3a3a5a;color:var(--muted);font-family:Cinzel,serif;font-size:.65rem;padding:3px 10px;border-radius:8px;cursor:pointer;touch-action:manipulation;">💾 Save</button></div>
+
+  <div class="stats-bar">
+    <div class="stat-box"><div class="label">Rolls</div><div class="value" id="stat-rolls">0</div></div>
+    <div class="stat-box"><div class="label">Unique Auras</div><div class="value" id="stat-unique">0</div></div>
+    <div class="stat-box"><div class="label">Rarest Roll</div><div class="value" id="stat-rarest">—</div></div>
+    <div class="stat-box"><div class="label">Tokens Earned</div><div class="value" id="stat-tokens-earned">0</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('roll')">⚄ Roll</button>
+    <button class="tab-btn" onclick="switchTab('collection')">📦 Collection</button>
+    <button class="tab-btn" onclick="switchTab('shop')">🛒 Shop</button>
+    <button class="tab-btn" onclick="switchTab('equipment')">⚔️ Equipment</button>
+  </div>
+
+  <!-- ROLL TAB -->
+  <div class="tab-panel active" id="tab-roll">
+    <div class="arena" id="arena">
+      <div class="arena-flash" id="arena-flash"></div>
+      <div class="particle-field" id="particles"></div>
+      <div class="equipped-display" id="equipped-display"></div>
+      <div class="aura-ring" id="aura-ring" onclick="doRoll()">
+        <div class="ring-outer" id="ring-outer"></div>
+        <div class="ring-inner" id="ring-inner">✦</div>
+      </div>
+      <div>
+        <div class="aura-name" id="aura-name">Click to Roll</div>
+        <div class="aura-rarity" id="aura-rarity">— awaiting fate —</div>
+      </div>
+      <div class="btn-row">
+        <button class="roll-btn" id="roll-btn" onclick="doRoll()">✦ ROLL ✦</button>
+        <button class="auto-btn" id="auto-btn" onclick="toggleAuto()">Auto Roll</button>
+      </div>
+    </div>
+    <br>
+    <div class="section-title">Roll Log</div>
+    <div class="log-box" id="log-box"></div>
+  </div>
+
+  <!-- COLLECTION TAB -->
+  <div class="tab-panel" id="tab-collection">
+    <div class="section-title">Aura Collection</div>
+    <div class="inv-grid" id="inv-grid">
+      <div style="color:var(--muted);font-size:.82rem;grid-column:1/-1;text-align:center;padding:30px;font-family:Cinzel,serif;">No auras discovered yet...</div>
+    </div>
+  </div>
+
+  <!-- SHOP TAB -->
+  <div class="tab-panel" id="tab-shop">
+    <div class="section-title">Equipment Shop — spend tokens to gain luck &amp; speed</div>
+    <div class="shop-grid" id="shop-grid"></div>
+  </div>
+
+  <!-- EQUIPMENT TAB -->
+  <div class="tab-panel" id="tab-equipment">
+    <div class="section-title">Equipped <span style="color:var(--text);font-size:.75rem">(4 slots)</span></div>
+    <div id="equip-slots" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;"></div>
+    <div class="section-title">Owned Items</div>
+    <div class="shop-grid" id="owned-grid"></div>
+  </div>
+</div>
+
+
+<!-- ══ CUTSCENE OVERLAY ══ -->
+<div class="cutscene" id="cutscene">
+  <div class="cs-bg" id="cs-bg"></div>
+  <div class="cs-atmosphere" id="cs-atmosphere"></div>
+  <div class="cs-rays" id="cs-rays"></div>
+  <div class="cs-vignette"></div>
+  <div class="cs-scanlines" id="cs-scanlines" style="display:none"></div>
+  <div class="cs-glitch" id="cs-glitch"></div>
+  <div class="cs-stage" id="cs-stage">
+    <div class="cs-label" id="cs-label">AURA DISCOVERED</div>
+    <div class="cs-ring-wrap" id="cs-ring-wrap">
+      <div class="cs-ring-outer" id="cs-ring-outer"></div>
+      <div class="cs-ring-outer2" id="cs-ring-outer2"></div>
+      <div class="cs-ring-inner" id="cs-ring-inner">✦</div>
+      <div class="cs-particles" id="cs-particles"></div>
+    </div>
+    <div class="cs-name" id="cs-name">—</div>
+    <div class="cs-rarity-badge" id="cs-rarity-badge">Common</div>
+    <div class="cs-odds" id="cs-odds">1 in 3</div>
+    <button class="cs-close" id="cs-close">✦ Close ✦</button>
+  </div>
+</div>
+
+<!-- Lucky overlay -->
+<div class="lucky-overlay" id="lucky-overlay" onclick="dismissLucky()">
+  <div class="lucky-card" id="lucky-card" onclick="event.stopPropagation()">
+    <span class="lucky-emoji" id="lucky-emoji">✦</span>
+    <div class="lucky-title" id="lucky-title">AURA</div>
+    <div class="lucky-rarity" id="lucky-rarity">1 in ∞</div>
+    <div class="lucky-token-reward" id="lucky-token-reward">+0 🪙</div>
+    <button class="lucky-dismiss" onclick="dismissLucky()">Continue Rolling</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════
+//  AURA DATA
+// ══════════════════
+const AURAS=[
+  // Common (0)
+  {name:"Cloudy",      emoji:"☁️", color:"#a0b8c8",glow:"#a0b8c844",rarity:"Common",      chance:1/3,       tier:0,tokens:1},
+  {name:"Windy",       emoji:"🌬️", color:"#80c8d8",glow:"#80c8d844",rarity:"Common",      chance:1/4,       tier:0,tokens:1},
+  {name:"Ember",       emoji:"🔥", color:"#f08040",glow:"#f0804044",rarity:"Common",      chance:1/5,       tier:0,tokens:1},
+  {name:"Forest",      emoji:"🌿", color:"#60c060",glow:"#60c06044",rarity:"Common",      chance:1/6,       tier:0,tokens:1},
+  {name:"Sandy",       emoji:"🏜️", color:"#d4a860",glow:"#d4a86044",rarity:"Common",      chance:1/7,       tier:0,tokens:1},
+  // Uncommon (1)
+  {name:"Frost",       emoji:"❄️", color:"#80d0ff",glow:"#80d0ff44",rarity:"Uncommon",    chance:1/15,      tier:1,tokens:1},
+  {name:"Thunder",     emoji:"⚡", color:"#ffee44",glow:"#ffee4444",rarity:"Uncommon",    chance:1/20,      tier:1,tokens:1},
+  {name:"Shadow",      emoji:"🌑", color:"#9070c0",glow:"#9070c044",rarity:"Uncommon",    chance:1/25,      tier:1,tokens:1},
+  {name:"Rose",        emoji:"🌹", color:"#ff6080",glow:"#ff608044",rarity:"Uncommon",    chance:1/30,      tier:1,tokens:1},
+  {name:"Ocean",       emoji:"🌊", color:"#0090d0",glow:"#0090d044",rarity:"Uncommon",    chance:1/25,      tier:1,tokens:1},
+  {name:"Magma",       emoji:"🫧", color:"#ff6030",glow:"#ff603044",rarity:"Uncommon",    chance:1/22,      tier:1,tokens:1},
+  // Rare (2)
+  {name:"Phantom",     emoji:"👻", color:"#c0a0ff",glow:"#c0a0ff55",rarity:"Rare",        chance:1/75,      tier:2,tokens:3},
+  {name:"Glacial",     emoji:"🧊", color:"#00cfff",glow:"#00cfff55",rarity:"Rare",        chance:1/100,     tier:2,tokens:3},
+  {name:"Volcanic",    emoji:"🌋", color:"#ff4020",glow:"#ff402055",rarity:"Rare",        chance:1/150,     tier:2,tokens:3},
+  {name:"Spectral",    emoji:"🌈", color:"#ff80ff",glow:"#ff80ff55",rarity:"Rare",        chance:1/200,     tier:2,tokens:3},
+  {name:"Cosmic",      emoji:"🌙", color:"#8040ff",glow:"#8040ff55",rarity:"Rare",        chance:1/120,     tier:2,tokens:3},
+  {name:"Miasma",      emoji:"🟣", color:"#a030a0",glow:"#a030a055",rarity:"Rare",        chance:1/180,     tier:2,tokens:3},
+  // Epic (3)
+  {name:"Abyssal",     emoji:"🕳️", color:"#5020c0",glow:"#5020c066",rarity:"Epic",        chance:1/500,     tier:3,tokens:10},
+  {name:"Aurora",      emoji:"🌌", color:"#40ffc0",glow:"#40ffc066",rarity:"Epic",        chance:1/750,     tier:3,tokens:10},
+  {name:"Infernal",    emoji:"😈", color:"#ff2020",glow:"#ff202066",rarity:"Epic",        chance:1/1000,    tier:3,tokens:10},
+  {name:"Crystal",     emoji:"💎", color:"#80ffff",glow:"#80ffff66",rarity:"Epic",        chance:1/800,     tier:3,tokens:10},
+  {name:"Tempest",     emoji:"🌪️", color:"#60a0ff",glow:"#60a0ff66",rarity:"Epic",        chance:1/600,     tier:3,tokens:10},
+  {name:"Nether",      emoji:"🧿", color:"#2040a0",glow:"#2040a066",rarity:"Epic",        chance:1/900,     tier:3,tokens:10},
+  // Legendary (4)
+  {name:"Celestial",   emoji:"⭐", color:"#ffe080",glow:"#ffe08088",rarity:"Legendary",   chance:1/2500,    tier:4,tokens:30},
+  {name:"Void",        emoji:"🌀", color:"#ff00ff",glow:"#ff00ff88",rarity:"Legendary",   chance:1/5000,    tier:4,tokens:30},
+  {name:"Chronos",     emoji:"⏳", color:"#80ffff",glow:"#80ffff88",rarity:"Legendary",   chance:1/7500,    tier:4,tokens:30},
+  {name:"Draconic",    emoji:"🐉", color:"#ff8000",glow:"#ff800088",rarity:"Legendary",   chance:1/4000,    tier:4,tokens:30},
+  {name:"Glacial King",emoji:"🏔️", color:"#c0f0ff",glow:"#c0f0ff88",rarity:"Legendary",   chance:1/6000,    tier:4,tokens:30},
+  // Divine (5)
+  {name:"Divinity",    emoji:"✨", color:"#ffffff",glow:"#ffffff99",rarity:"Divine",       chance:1/25000,   tier:5,tokens:80},
+  {name:"Oblivion",    emoji:"🌠", color:"#ff80a0",glow:"#ff80a099",rarity:"Divine",       chance:1/50000,   tier:5,tokens:80},
+  {name:"Seraphic",    emoji:"👼", color:"#fff0c0",glow:"#fff0c099",rarity:"Divine",       chance:1/40000,   tier:5,tokens:80},
+  {name:"Elysian",     emoji:"🕊️", color:"#e0e0ff",glow:"#e0e0ff99",rarity:"Divine",       chance:1/35000,   tier:5,tokens:80},
+  // Godly (6)
+  {name:"Godly",       emoji:"👑", color:"#f0c060",glow:"#f0c060bb",rarity:"Godly",        chance:1/250000,  tier:6,tokens:200},
+  {name:"Olympian",    emoji:"⚡", color:"#fff080",glow:"#fff080bb",rarity:"Godly",        chance:1/500000,  tier:6,tokens:200},
+  // Secret (7) — hidden until found
+  {name:"Mirage",      emoji:"🔮", color:"#20c0a0",glow:"#20c0a099",rarity:"Secret",       chance:1/500000,  tier:7,tokens:500,secret:true},
+  {name:"Eclipse",     emoji:"🌒", color:"#20d060",glow:"#20d06099",rarity:"Secret",       chance:1/750000,  tier:7,tokens:500,secret:true},
+  {name:"Phantom King",emoji:"👁️", color:"#c040ff",glow:"#c040ff99",rarity:"Secret",       chance:1/1000000, tier:7,tokens:500,secret:true},
+  // Cursed (8)
+  {name:"Cursed",      emoji:"💀", color:"#c02020",glow:"#c0202099",rarity:"Cursed",       chance:1/2000000, tier:8,tokens:1000},
+  {name:"Malice",      emoji:"🩸", color:"#a00000",glow:"#a0000099",rarity:"Cursed",       chance:1/5000000, tier:8,tokens:1000},
+  {name:"Damnation",   emoji:"🔱", color:"#800000",glow:"#80000099",rarity:"Cursed",       chance:1/8000000, tier:8,tokens:1000},
+  // Prismatic (9)
+  {name:"Prismatic",   emoji:"🌟", color:"#ff80ff",glow:"#ff80ffbb",rarity:"Prismatic",    chance:1/15000000,tier:9,tokens:2000},
+  {name:"Spectrum",    emoji:"🌈", color:"#80ffff",glow:"#80ffffbb",rarity:"Prismatic",    chance:1/25000000,tier:9,tokens:2000},
+  // Transcendent (10)
+  {name:"Transcendence",emoji:"🔱",color:"#ffe0a0",glow:"#ffe0a0cc",rarity:"Transcendent", chance:1/100000000,tier:10,tokens:5000},
+
+  // Extra Commons
+  {name:"Muddy",       emoji:"🪨", color:"#a08060",glow:"#a0806044",rarity:"Common",      chance:1/5,       tier:0,tokens:1},
+  {name:"Rainy",       emoji:"🌧️", color:"#7090b0",glow:"#7090b044",rarity:"Common",      chance:1/4,       tier:0,tokens:1},
+  {name:"Leafy",       emoji:"🍃", color:"#50b050",glow:"#50b05044",rarity:"Common",      chance:1/6,       tier:0,tokens:1},
+  // Extra Uncommons
+  {name:"Lunar",       emoji:"🌙", color:"#c0d0ff",glow:"#c0d0ff44",rarity:"Uncommon",    chance:1/18,      tier:1,tokens:2},
+  {name:"Venom",       emoji:"🐍", color:"#80c020",glow:"#80c02044",rarity:"Uncommon",    chance:1/22,      tier:1,tokens:2},
+  {name:"Blaze",       emoji:"🕯️", color:"#ffa020",glow:"#ffa02044",rarity:"Uncommon",    chance:1/28,      tier:1,tokens:2},
+  // Extra Rares
+  {name:"Gilded",      emoji:"🪙", color:"#e0a820",glow:"#e0a82055",rarity:"Rare",        chance:1/90,      tier:2,tokens:4},
+  {name:"Verdant",     emoji:"🌲", color:"#20a060",glow:"#20a06055",rarity:"Rare",        chance:1/130,     tier:2,tokens:4},
+  {name:"Templar",     emoji:"⚔️", color:"#c0c0e0",glow:"#c0c0e055",rarity:"Rare",        chance:1/160,     tier:2,tokens:4},
+  {name:"Abyssal Fog", emoji:"🌫️", color:"#6080a0",glow:"#6080a055",rarity:"Rare",        chance:1/110,     tier:2,tokens:4},
+  // Extra Epics
+  {name:"Omega",       emoji:"Ω",  color:"#ff4080",glow:"#ff408066",rarity:"Epic",        chance:1/700,     tier:3,tokens:12},
+  {name:"Arcane",      emoji:"🔯", color:"#8080ff",glow:"#8080ff66",rarity:"Epic",        chance:1/850,     tier:3,tokens:12},
+  {name:"Stormborn",   emoji:"🌩️", color:"#70b0ff",glow:"#70b0ff66",rarity:"Epic",        chance:1/650,     tier:3,tokens:12},
+  {name:"Magmatic",    emoji:"🫁", color:"#ff5010",glow:"#ff501066",rarity:"Epic",        chance:1/950,     tier:3,tokens:12},
+  // Extra Legendaries
+  {name:"Wraith",      emoji:"👤", color:"#a0c0ff",glow:"#a0c0ff88",rarity:"Legendary",   chance:1/3500,    tier:4,tokens:35},
+  {name:"Phoenix",     emoji:"🦅", color:"#ff8040",glow:"#ff804088",rarity:"Legendary",   chance:1/5500,    tier:4,tokens:35},
+  {name:"Tidal",       emoji:"🌀", color:"#00b0d0",glow:"#00b0d088",rarity:"Legendary",   chance:1/4500,    tier:4,tokens:35},
+  // Extra Divines
+  {name:"Radiant",     emoji:"💠", color:"#e0f0ff",glow:"#e0f0ff99",rarity:"Divine",       chance:1/30000,   tier:5,tokens:90},
+  {name:"Astral",      emoji:"🛸", color:"#a0e0ff",glow:"#a0e0ff99",rarity:"Divine",       chance:1/45000,   tier:5,tokens:90},
+  // Extra Godlies
+  {name:"Sovereign",   emoji:"💎", color:"#e8d080",glow:"#e8d080bb",rarity:"Godly",        chance:1/300000,  tier:6,tokens:220},
+  // Extra Secrets
+  {name:"Specter",     emoji:"👾", color:"#40e080",glow:"#40e08099",rarity:"Secret",       chance:1/600000,  tier:7,tokens:600,secret:true},
+  {name:"Rift",        emoji:"🌀", color:"#ff40c0",glow:"#ff40c099",rarity:"Secret",       chance:1/900000,  tier:7,tokens:600,secret:true},
+  // Extra Cursed
+  {name:"Plague",      emoji:"🦠", color:"#902020",glow:"#90202099",rarity:"Cursed",       chance:1/3000000, tier:8,tokens:1200},
+  {name:"Despair",     emoji:"😱", color:"#700000",glow:"#70000099",rarity:"Cursed",       chance:1/6000000, tier:8,tokens:1200},
+  // Extra Prismatic
+  {name:"Kaleidoscope",emoji:"🔆", color:"#ffccff",glow:"#ffccffbb",rarity:"Prismatic",    chance:1/20000000,tier:9,tokens:2500},
+
+  // ── MORE COMMONS ──
+  {name:"Misty",       emoji:"🌁", color:"#b0c8d8",glow:"#b0c8d844",rarity:"Common",      chance:1/5,        tier:0,tokens:1},
+  {name:"Icy",         emoji:"🧊", color:"#c0e8ff",glow:"#c0e8ff44",rarity:"Common",      chance:1/6,        tier:0,tokens:1},
+  {name:"Dusty",       emoji:"🌪️", color:"#c0a870",glow:"#c0a87044",rarity:"Common",      chance:1/7,        tier:0,tokens:1},
+
+  // ── MORE UNCOMMONS ──
+  {name:"Thorned",     emoji:"🌵", color:"#60a840",glow:"#60a84044",rarity:"Uncommon",    chance:1/24,       tier:1,tokens:2},
+  {name:"Aqua",        emoji:"💧", color:"#20c0ff",glow:"#20c0ff44",rarity:"Uncommon",    chance:1/20,       tier:1,tokens:2},
+  {name:"Gale",        emoji:"💨", color:"#a0d0e0",glow:"#a0d0e044",rarity:"Uncommon",    chance:1/26,       tier:1,tokens:2},
+  {name:"Smoldering",  emoji:"🪵", color:"#c06030",glow:"#c0603044",rarity:"Uncommon",    chance:1/19,       tier:1,tokens:2},
+
+  // ── MORE RARES ──
+  {name:"Vortex",      emoji:"🌀", color:"#4080c0",glow:"#4080c055",rarity:"Rare",        chance:1/85,       tier:2,tokens:4},
+  {name:"Thorium",     emoji:"☢️", color:"#80ff40",glow:"#80ff4055",rarity:"Rare",        chance:1/140,      tier:2,tokens:4},
+  {name:"Lunar Tide",  emoji:"🌊", color:"#6080ff",glow:"#6080ff55",rarity:"Rare",        chance:1/170,      tier:2,tokens:4},
+  {name:"Iron",        emoji:"⚙️", color:"#a0a8b8",glow:"#a0a8b855",rarity:"Rare",        chance:1/95,       tier:2,tokens:4},
+  {name:"Crimson",     emoji:"🌺", color:"#e03040",glow:"#e0304055",rarity:"Rare",        chance:1/115,      tier:2,tokens:4},
+
+  // ── MORE EPICS ──
+  {name:"Shadowflame",emoji:"🕯️",  color:"#8020c0",glow:"#8020c066",rarity:"Epic",        chance:1/680,      tier:3,tokens:12},
+  {name:"Glacius",     emoji:"🏔️", color:"#60d0ff",glow:"#60d0ff66",rarity:"Epic",        chance:1/820,      tier:3,tokens:12},
+  {name:"Netherblade", emoji:"🗡️", color:"#4040e0",glow:"#4040e066",rarity:"Epic",        chance:1/920,      tier:3,tokens:12},
+  {name:"Solarflare",  emoji:"☀️", color:"#ffa000",glow:"#ffa00066",rarity:"Epic",        chance:1/760,      tier:3,tokens:12},
+  {name:"Voidwalker",  emoji:"👁️", color:"#600080",glow:"#60008066",rarity:"Epic",        chance:1/1050,     tier:3,tokens:12},
+
+  // ── MORE LEGENDARIES ──
+  {name:"Stardust",    emoji:"✨", color:"#e0c0ff",glow:"#e0c0ff88",rarity:"Legendary",   chance:1/3000,     tier:4,tokens:35},
+  {name:"Leviathan",   emoji:"🐋", color:"#0060c0",glow:"#0060c088",rarity:"Legendary",   chance:1/5800,     tier:4,tokens:35},
+  {name:"Inferno King",emoji:"🔥", color:"#ff4000",glow:"#ff400088",rarity:"Legendary",   chance:1/6500,     tier:4,tokens:35},
+  {name:"Tempest Lord",emoji:"⛈️", color:"#60a0ff",glow:"#60a0ff88",rarity:"Legendary",   chance:1/4200,     tier:4,tokens:35},
+
+  // ── MORE DIVINES ──
+  {name:"Solaris",     emoji:"🌞", color:"#ffffc0",glow:"#ffffc099",rarity:"Divine",       chance:1/28000,    tier:5,tokens:90},
+  {name:"Moonweaver",  emoji:"🌙", color:"#c0c0ff",glow:"#c0c0ff99",rarity:"Divine",       chance:1/42000,    tier:5,tokens:90},
+  {name:"Nebula",      emoji:"🌌", color:"#c080ff",glow:"#c080ff99",rarity:"Divine",       chance:1/38000,    tier:5,tokens:90},
+
+  // ── MORE GODLIES ──
+  {name:"Apex",        emoji:"🔺", color:"#ffd060",glow:"#ffd060bb",rarity:"Godly",        chance:1/400000,   tier:6,tokens:250},
+  {name:"Titan",       emoji:"⚡", color:"#e0e080",glow:"#e0e080bb",rarity:"Godly",        chance:1/600000,   tier:6,tokens:250},
+
+  // ── MORE SECRETS ──
+  {name:"Phantom Rift",emoji:"🌀", color:"#00ffc0",glow:"#00ffc099",rarity:"Secret",       chance:1/800000,   tier:7,tokens:700,secret:true},
+  {name:"Wraith King", emoji:"💀", color:"#8060ff",glow:"#8060ff99",rarity:"Secret",       chance:1/1200000,  tier:7,tokens:700,secret:true},
+
+  // ── MORE CURSED ──
+  {name:"Abomination", emoji:"🧟", color:"#803030",glow:"#80303099",rarity:"Cursed",       chance:1/4000000,  tier:8,tokens:1500},
+  {name:"Corruption",  emoji:"🕸️", color:"#602020",glow:"#60202099",rarity:"Cursed",       chance:1/7000000,  tier:8,tokens:1500},
+  {name:"Anguish",     emoji:"😰", color:"#500000",glow:"#50000099",rarity:"Cursed",       chance:1/10000000, tier:8,tokens:1500},
+
+  // ── MORE PRISMATIC ──
+  {name:"Aurora Prism",emoji:"🌈", color:"#ff60ff",glow:"#ff60ffbb",rarity:"Prismatic",    chance:1/18000000, tier:9,tokens:2500},
+  {name:"Chromatic",   emoji:"💫", color:"#ffff80",glow:"#ffff80bb",rarity:"Prismatic",    chance:1/30000000, tier:9,tokens:2500},
+
+  // ── MORE TRANSCENDENT ──
+  {name:"Axiom",       emoji:"🔮", color:"#ffc080",glow:"#ffc080cc",rarity:"Transcendent", chance:1/150000000,tier:10,tokens:6000},
+  {name:"Eternity",    emoji:"♾️", color:"#e0d0a0",glow:"#e0d0a0cc",rarity:"Transcendent", chance:1/200000000,tier:10,tokens:6000},
+
+  // ── MORE NULL ──
+  {name:"Void Null",   emoji:"🕳️", color:"#707070",glow:"#70707099",rarity:"Null",          chance:1/2000000000,tier:11,tokens:15000},
+
+  // ════════════════════════════════════
+  //  TIER 12 — OMEGA  (1 in 10 billion)
+  // ════════════════════════════════════
+  {name:"Omega",       emoji:"Ω",  color:"#ff2080",glow:"#ff2080dd",rarity:"Omega",         chance:1/10000000000, tier:12,tokens:25000},
+  {name:"Singularity", emoji:"🌑", color:"#400080",glow:"#400080dd",rarity:"Omega",         chance:1/25000000000, tier:12,tokens:25000},
+  {name:"Cataclysm",   emoji:"☄️", color:"#ff6020",glow:"#ff6020dd",rarity:"Omega",         chance:1/15000000000, tier:12,tokens:25000},
+
+  // ════════════════════════════════════
+  //  TIER 13 — ETERNAL (1 in 1 trillion)
+  // ════════════════════════════════════
+  {name:"Eternal",     emoji:"🌀", color:"#80ffff",glow:"#80ffffee",rarity:"Eternal",        chance:1/1000000000000, tier:13,tokens:100000},
+  {name:"Infinite",    emoji:"∞",  color:"#ffffff",glow:"#ffffffee",rarity:"Eternal",        chance:1/5000000000000, tier:13,tokens:100000},
+  {name:"Omniscient",  emoji:"👁️", color:"#c0ffc0",glow:"#c0ffc0ee",rarity:"Eternal",        chance:1/2000000000000, tier:13,tokens:100000},
+
+  // ════════════════════════════════════
+  //  TIER 14 — GENESIS (1 in 1 quadrillion) THE RAREST
+  // ════════════════════════════════════
+  {name:"Genesis",     emoji:"🌟", color:"#ffff00",glow:"#ffff00ff",rarity:"Genesis",        chance:1/1000000000000000, tier:14,tokens:500000},
+
+  // Original Null
+  {name:"Null",        emoji:"⬛", color:"#909090",glow:"#90909099",rarity:"Null",          chance:1/1000000000,tier:11,tokens:10000},
+];
+const totalW=AURAS.reduce((s,a)=>s+a.chance,0);
+AURAS.forEach(a=>a.weight=a.chance/totalW);
+
+// ══════════════════
+//  EQUIPMENT
+// ══════════════════
+const EQUIPMENT=[
+  {id:"lucky_charm",   name:"Lucky Charm",     icon:"🍀",color:"#60c060",desc:"A four-leaf clover blessed by spirits.",bonus:"Luck ×1.5",           price:50,  luckMult:1.5, speedMult:1},
+  {id:"speed_boots",   name:"Swift Boots",     icon:"👟",color:"#60c0ff",desc:"Reduces roll cooldown by 25%.",        bonus:"Speed +25%",           price:80,  luckMult:1,   speedMult:0.75},
+  {id:"fortune_ring",  name:"Fortune Ring",    icon:"💍",color:"#f0c060",desc:"Ancient ring said to bend fate.",      bonus:"Luck ×2.0",            price:150, luckMult:2.0, speedMult:1},
+  {id:"turbo_gloves",  name:"Turbo Gloves",    icon:"🥊",color:"#ff8060",desc:"Doubles your rolling speed.",         bonus:"Speed +50%",           price:200, luckMult:1,   speedMult:0.5},
+  {id:"mystic_pendant",name:"Mystic Pendant",  icon:"🔮",color:"#a060ff",desc:"Glows with otherworldly energy.",     bonus:"Luck ×2.5",            price:250, luckMult:2.5, speedMult:1},
+  {id:"star_amulet",   name:"Star Amulet",     icon:"⭐",color:"#ffe080",desc:"Celestial power flows through it.",   bonus:"Luck ×3.0",            price:400, luckMult:3.0, speedMult:1},
+  {id:"wind_cape",     name:"Wind Cape",       icon:"🌬️",color:"#80d0ff",desc:"Ride the wind between each roll.",    bonus:"Speed +65%",           price:450, luckMult:1,   speedMult:0.35},
+  {id:"void_crystal",  name:"Void Crystal",    icon:"💜",color:"#8040ff",desc:"A shard of pure void energy.",        bonus:"Luck ×4.0",            price:800, luckMult:4.0, speedMult:1},
+  {id:"time_watch",    name:"Temporal Watch",  icon:"⏱️",color:"#80ffff",desc:"Time bends to speed up your rolls.",  bonus:"Speed +75%",           price:900, luckMult:1,   speedMult:0.25},
+  {id:"golden_eye",    name:"Golden Eye",      icon:"👁️",color:"#ffd040",desc:"Sees fate before it happens.",        bonus:"Luck ×5.0",            price:1200,luckMult:5.0, speedMult:1},
+  {id:"rainbow_dice",  name:"Rainbow Dice",    icon:"🎲",color:"#ff80ff",desc:"Each face holds a different destiny.",bonus:"Luck ×6.0",            price:1800,luckMult:6.0, speedMult:1},
+  {id:"dragon_claw",   name:"Dragon Claw",     icon:"🐉",color:"#ff8020",desc:"Torn from a legendary beast.",        bonus:"Luck ×5.0 + Speed +40%",price:2200,luckMult:5.0,speedMult:0.6},
+  {id:"divine_crown",  name:"Divine Crown",    icon:"👑",color:"#fff080",desc:"Worn only by those chosen by fate.",  bonus:"Luck ×7.0 + Speed +35%",price:3500,luckMult:7.0,speedMult:0.65},
+  {id:"cosmic_orb",    name:"Cosmic Orb",      icon:"🌌",color:"#40ffc0",desc:"Contains the power of a dying star.", bonus:"Luck ×8.0",            price:5000,luckMult:8.0, speedMult:1},
+  {id:"null_shard",    name:"Null Shard",      icon:"⬛",color:"#909090",desc:"Fragment of nothingness. Paradox.",   bonus:"Luck ×12.0",           price:9999,luckMult:12.0,speedMult:1},
+];
+
+// ══════════════════
+//  STATE
+// ══════════════════
+let rolls=0,autoInterval=null,isRolling=false;
+const inventory={};
+let rarestTier=-1,baseLuck=1,baseSpeed=400;
+let tokens=0,totalTokensEarned=0;
+const ownedEquip=new Set();
+const equippedItems=[null,null,null,null];
+
+function getLuck(){let m=baseLuck;equippedItems.forEach(id=>{if(id){const e=EQUIPMENT.find(x=>x.id===id);if(e)m*=e.luckMult;}});return m;}
+function getSpeed(){let s=baseSpeed;equippedItems.forEach(id=>{if(id){const e=EQUIPMENT.find(x=>x.id===id);if(e)s=Math.max(60,s*e.speedMult);}});return Math.round(s);}
+function updateHUD(){document.getElementById('luck-display').textContent=getLuck().toFixed(1)+'×';document.getElementById('speed-display').textContent=getSpeed()+'ms';}
+
+// ══════════════════
+//  AUDIO
+// ══════════════════
+let ac=null;
+function getAC(){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();return ac;}
+function tone(f,t,d,v=.28,dl=0){try{const c=getAC(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.setValueAtTime(f,c.currentTime+dl);g.gain.setValueAtTime(0,c.currentTime+dl);g.gain.linearRampToValueAtTime(v,c.currentTime+dl+.01);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+dl+d);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+.05);}catch(e){}}
+function noise(d,v=.15,dl=0,hi=200){try{const c=getAC(),b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),dat=b.getChannelData(0);for(let i=0;i<dat.length;i++)dat[i]=Math.random()*2-1;const s=c.createBufferSource();s.buffer=b;const f=c.createBiquadFilter();f.type='highpass';f.frequency.value=hi;const g=c.createGain();g.gain.setValueAtTime(v,c.currentTime+dl);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+dl+d);s.connect(f);f.connect(g);g.connect(c.destination);s.start(c.currentTime+dl);}catch(e){}}
+function sw(f0,f1,d,v=.28,t='sine'){try{const c=getAC(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.setValueAtTime(f0,c.currentTime);o.frequency.exponentialRampToValueAtTime(f1,c.currentTime+d);g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d+.05);o.start();o.stop(c.currentTime+d+.1);}catch(e){}}
+const SFX={
+  roll(){noise(.04,.05,0,2000);},
+  t0(){tone(320,'sine',.12,.15);tone(480,'sine',.08,.1,.05);},
+  t1(){tone(440,'triangle',.18,.18);tone(660,'sine',.12,.13,.06);},
+  t2(){tone(523,'sine',.22,.24);tone(784,'sine',.18,.18,.08);noise(.08,.07,0,800);},
+  t3(){[392,523,659,784].forEach((f,i)=>tone(f,'triangle',.2,.2,i*.06));noise(.18,.13,0,600);tone(200,'sawtooth',.14,.16);},
+  t4(){noise(.08,.3,0,100);[261,329,392,523].forEach((f,i)=>tone(f,'sine',.8,.26,.06+i*.02));sw(200,1200,.6,.26);},
+  t5(){noise(.1,.36,0,80);[261,329,392,523,659,784].forEach((f,i)=>tone(f,'sine',1.2,.15,i*.05));sw(300,2000,1,.3);[1047,1319,1568].forEach((f,i)=>tone(f,'sine',.8,.1,.3+i*.1));},
+  t6(){noise(.15,.52,0,40);[65,98,130,196].forEach((f,i)=>tone(f,'sawtooth',1.5,.17,i*.04));[261,329,392,523,659,784,1047].forEach((f,i)=>tone(f,'sine',2,.15,.15+i*.06));sw(80,3000,1.5,.2,'sawtooth');},
+  t7(){noise(.2,.38,0,50);[130,196,261,329].forEach((f,i)=>tone(f,'sine',2,.18,.5-i*.1));sw(2000,200,1.2,.28);},
+  t8(){noise(.3,.48,0,30);[65,82,110].forEach((f,i)=>tone(f,'sawtooth',1.5,.24,i*.05));sw(1000,100,1,.33,'sawtooth');},
+  t9(){const n=[261,330,392,523,659,784,1047,1319];n.forEach((f,i)=>tone(f,'triangle',.15,.19,i*.04));n.slice().reverse().forEach((f,i)=>tone(f,'sine',.15,.14,.32+i*.04));sw(200,4000,.8,.28);},
+  t10(){noise(.1,.48,0,40);[65,98,130,196,261,329].forEach((f,i)=>tone(f,'sine',3,.19,i*.06));[1047,1319,1568,2093,2637].forEach((f,i)=>tone(f,'sine',2,.14,.5+i*.08));sw(100,5000,2,.28);sw(5000,100,1.5,.18);},
+  t11(){setTimeout(()=>{noise(.05,.75,0,20);[32,40,50,65].forEach((f,i)=>tone(f,'sawtooth',3,.28,i*.02));sw(5000,30,2,.38,'sawtooth');},700);},
+  buy(){tone(523,'sine',.1,.18);tone(659,'sine',.1,.16,.06);tone(784,'sine',.15,.18,.12);},
+};
+const SFX_EXTRA={
+  t12(){
+    // Omega: brutal impact + rapid ascending arp
+    noise(.2,.7,0,20);
+    [32,40,55,70].forEach((f,i)=>tone(f,'sawtooth',2,.3,i*.02));
+    [523,659,784,1047,1319,1568,2093].forEach((f,i)=>tone(f,'triangle',.2,.22,i*.035));
+    sw(200,8000,1.2,.4,'sawtooth');
+    sw(8000,200,.8,.2,'sine');
+  },
+  t13(){
+    // Eternal: otherworldly choir + infinite sweep
+    noise(.05,.6,0,20);
+    [65,130,196,261,392,523,784,1047,1568,2093].forEach((f,i)=>tone(f,'sine',4,.18,i*.05));
+    [4186,3136,2093,1568,1047].forEach((f,i)=>tone(f,'sine',2,.12,.8+i*.1));
+    sw(50,16000,3,.35,'sine');
+    sw(16000,50,2,.2,'triangle');
+    setTimeout(()=>{[261,329,392,523,659].forEach((f,i)=>tone(f,'sine',1.5,.15,i*.06));},1500);
+  },
+  t14(){
+    // Genesis: the sound of creation — everything at once
+    noise(.25,.8,0,10);
+    // Deep bass foundation
+    [20,25,32,40,50].forEach((f,i)=>tone(f,'sawtooth',5,.3,i*.01));
+    // Rising harmonic series
+    [65,98,130,196,261,329,392,523,659,784,1047,1319,1568,2093,2637,3136].forEach((f,i)=>tone(f,'sine',3,.14,i*.04));
+    // Descending bells
+    [4186,3136,2637,2093,1568,1319,1047,784,659,523].forEach((f,i)=>tone(f,'sine',2,.12,1+i*.07));
+    // Double sweep
+    sw(30,20000,4,.5,'sawtooth');
+    sw(20000,30,3,.3,'sine');
+    sw(100,20000,3,.4,'triangle');
+    // Final chord burst
+    setTimeout(()=>{ [261,329,392,523,659,784,1047].forEach((f,i)=>tone(f,'sine',2,.2,i*.03)); },2000);
+  },
+};
+function playSound(tier){try{
+  const map=[SFX.t0,SFX.t1,SFX.t2,SFX.t3,SFX.t4,SFX.t5,SFX.t6,SFX.t7,SFX.t8,SFX.t9,SFX.t10,SFX.t11,SFX_EXTRA.t12,SFX_EXTRA.t13,SFX_EXTRA.t14];
+  (map[tier]||SFX.t0).call(tier>=12?SFX_EXTRA:SFX);
+}catch(e){}}
+
+// ══════════════════
+//  VISUAL FX
+// ══════════════════
+function applyFx(tier,color,glow){
+  const arena=document.getElementById('arena'),flash=document.getElementById('arena-flash');
+  arena.className='arena';
+  const fxMap={2:'fx-rare',3:'fx-epic',4:'fx-legendary',5:'fx-divine',6:'fx-godly',7:'fx-secret',8:'fx-secret',9:'fx-prismatic',10:'fx-transcendent',11:'fx-null',12:'fx-godly',13:'fx-transcendent',14:'fx-prismatic'};
+  if(fxMap[tier]){arena.classList.add(fxMap[tier]);setTimeout(()=>arena.classList.remove(fxMap[tier]),2200);}
+  if(tier>=3){flash.style.background=color+'44';flash.style.animation='none';flash.offsetHeight;flash.style.animation='arena-flash-std .9s ease-out forwards';setTimeout(()=>flash.style.animation='none',1000);}
+  if(tier>=4)spawnLightning(color,Math.min(tier*5,35));
+  if(tier>=5){const w=document.getElementById('divine-wipe');w.style.background=color;w.style.animation='none';w.offsetHeight;w.style.animation='divine-wipe 1.3s ease-out forwards';setTimeout(()=>w.style.animation='none',1600);}
+  if(tier>=6)spawnCrowns(tier);
+  if(tier>=9){const pb=document.createElement('div');pb.className='prismatic-bg';pb.style.background='conic-gradient(from 0deg,#f00,#ff8000,#ff0,#0f0,#00f,#f0f,#f00)';document.body.appendChild(pb);setTimeout(()=>pb.remove(),2500);}
+  if(tier===11){const nv=document.createElement('div');nv.className='null-void';document.body.appendChild(nv);setTimeout(()=>nv.remove(),3000);}
+}
+function spawnLightning(color,n){
+  const arena=document.getElementById('arena');
+  for(let i=0;i<n;i++){const el=document.createElement('div');el.className='lightning';el.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*60}%;height:${60+Math.random()*120}px;--lc:${color};--ld:${.1+Math.random()*.15}s;--ldel:${Math.random()*.5}s;--lrot:${-20+Math.random()*40}deg;`;arena.appendChild(el);setTimeout(()=>el.remove(),1100);}
+}
+function spawnCrowns(tier){
+  const icons=['👑','✨','⭐','💫','🌟','🔱','💎','🌠','⚡','🔮','🌈'];
+  const ic=icons[Math.min(tier-4,icons.length-1)];
+  const n=Math.min(10+(tier-4)*6,50);
+  for(let i=0;i<n;i++){const el=document.createElement('div');el.className='crown-rain';el.textContent=ic;el.style.cssText=`left:${Math.random()*100}vw;--cd:${1.5+Math.random()*2}s;--cdel:${Math.random()*1.4}s;--cr:${-30+Math.random()*60}deg;`;document.body.appendChild(el);setTimeout(()=>el.remove(),4500);}
+}
+function spawnParticles(color,n=20){
+  const f=document.getElementById('particles'),r=document.getElementById('aura-ring');
+  const cx=r.offsetLeft+r.offsetWidth/2,cy=r.offsetTop+r.offsetHeight/2;
+  for(let i=0;i<n;i++){const p=document.createElement('div');p.className='particle';const a=(Math.PI*2*i)/n+Math.random()*.5,d=80+Math.random()*90,sz=3+Math.random()*6;p.style.cssText=`width:${sz}px;height:${sz}px;background:${color};left:${cx}px;top:${cy}px;--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;--dur:${.5+Math.random()*.7}s;box-shadow:0 0 6px ${color};`;f.appendChild(p);setTimeout(()=>p.remove(),1500);}
+}
+
+// ══════════════════
+//  ROLL
+// ══════════════════
+function rollAura(){
+  const lk=getLuck();
+  const pool=AURAS.map(a=>({...a,ew:a.weight*(1+(lk-1)*Math.min(a.tier/2.5,3))}));
+  const tot=pool.reduce((s,a)=>s+a.ew,0);
+  let r=Math.random()*tot,cum=0;
+  for(const a of pool){cum+=a.ew;if(r<cum)return a;}
+  return AURAS[0];
+}
+function fmt(a){return'1 in '+Math.round(1/a.chance).toLocaleString();}
+
+function addTokens(n){tokens+=n;totalTokensEarned+=n;document.getElementById('token-count').textContent=tokens.toLocaleString();document.getElementById('stat-tokens-earned').textContent=totalTokensEarned.toLocaleString();}
+
+function addLog(aura){
+  const box=document.getElementById('log-box'),entry=document.createElement('div');entry.className='log-entry';
+  const now=new Date(),t=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+  const nm=aura.secret&&!inventory[aura.name]?'???':aura.name;
+  entry.innerHTML=`<span class="log-time">${t}</span>&nbsp;<span style="color:${aura.color}">${aura.emoji} ${nm}</span>&nbsp;<span style="color:var(--muted);font-size:.62rem">${aura.rarity} · ${fmt(aura)}</span>`;
+  box.prepend(entry);while(box.children.length>60)box.lastChild.remove();
+}
+
+function showLucky(aura){
+  const ol=document.getElementById('lucky-overlay'),card=document.getElementById('lucky-card');
+  document.getElementById('lucky-emoji').textContent=aura.emoji;
+  document.getElementById('lucky-title').textContent=aura.name;
+  document.getElementById('lucky-rarity').textContent=`${aura.rarity} · ${fmt(aura)}`;
+  document.getElementById('lucky-token-reward').textContent=`+${aura.tokens} 🪙`;
+  card.style.setProperty('--aura-color',aura.color);card.style.setProperty('--aura-glow',aura.glow);
+  ol.classList.add('show');if(autoInterval)toggleAuto();
+}
+function dismissLucky(){document.getElementById('lucky-overlay').classList.remove('show');}
+
+function doRoll(){
+  if(isRolling)return;isRolling=true;
+  const aura=rollAura();rolls++;
+  let sh=0;const maxSh=10;
+  const btn=document.getElementById('roll-btn');btn.classList.add('rolling');setTimeout(()=>btn.classList.remove('rolling'),400);
+  function shuffle(){
+    setDisplay(AURAS[Math.floor(Math.random()*AURAS.length)],false);
+    try{SFX.roll();}catch(e){}
+    sh++;
+    if(sh<maxSh){setTimeout(shuffle,28+sh*12);}
+    else{
+      setDisplay(aura,true);
+      const pc=Math.min(18+aura.tier*9,90);
+      spawnParticles(aura.color,pc);
+      if(aura.tier>=4)spawnParticles('#ffffff',18);
+      if(aura.tier>=7)spawnParticles(aura.color,40);
+      applyFx(aura.tier,aura.color,aura.glow);
+      playSound(aura.tier);
+      const isFirstDiscover=!inventory[aura.name];
+      inventory[aura.name]=(inventory[aura.name]||0)+1;
+      addLog(aura);updateCollection();
+      document.getElementById('stat-rolls').textContent=rolls.toLocaleString();
+      document.getElementById('stat-unique').textContent=Object.keys(inventory).length;
+      if(aura.tier>rarestTier){rarestTier=aura.tier;const el=document.getElementById('stat-rarest');el.innerHTML=`<span style="color:${aura.color}">${aura.emoji} ${aura.name}</span><div style="font-size:.6rem;color:var(--muted);font-family:Cinzel,serif;letter-spacing:.1em;margin-top:1px">${aura.rarity} · ${fmt(aura)}</div>`;el.style.fontSize='.85rem';}
+      if(aura.tokens>0)addTokens(aura.tokens);
+      if(isFirstDiscover){
+        if(aura.tier>=2){
+          showCutscene(aura,false);
+        } else {
+          // tier 0-1 first find: brief cutscene, auto-close
+          showCutscene(aura,false);
+          setTimeout(closeCutscene,1400);
+        }
+      }
+      if(aura.tier>=4&&isFirstDiscover)showLucky(aura);
+      if(aura.tier>=5){baseLuck=Math.min(baseLuck*1.15,4);updateHUD();}
+      if(rolls%10===0)saveGame();
+      isRolling=false;
+    }
+  }
+  shuffle();
+}
+
+function setDisplay(aura,final){
+  const ri=document.getElementById('ring-inner');
+  ri.textContent=aura.emoji;
+  ri.style.cssText=`background:radial-gradient(circle,${aura.color}55 0%,#05050a 70%);box-shadow:0 0 40px ${aura.glow} inset,0 0 60px ${aura.glow};font-size:3.2rem;`;
+  document.getElementById('aura-name').textContent=aura.name;
+  document.getElementById('aura-name').style.color=aura.color;
+  document.getElementById('aura-name').style.textShadow=`0 0 20px ${aura.glow}`;
+  document.getElementById('aura-rarity').textContent=final?`${aura.rarity} · ${fmt(aura)}`:'...';
+  document.getElementById('ring-outer').style.background=`conic-gradient(from 0deg,${aura.color},transparent,${aura.color}) border-box`;
+  if(final&&aura.tier>=3){document.getElementById('aura-ring').classList.add('ringing');setTimeout(()=>document.getElementById('aura-ring').classList.remove('ringing'),2200);}
+  if(final&&aura.tier===9)ri.animate([{filter:'hue-rotate(0deg)'},{filter:'hue-rotate(360deg)'}],{duration:1800,iterations:Infinity});
+}
+
+function toggleAuto(){
+  const btn=document.getElementById('auto-btn');
+  if(autoInterval){clearInterval(autoInterval);autoInterval=null;btn.classList.remove('active');btn.textContent='Auto Roll';}
+  else{btn.classList.add('active');btn.textContent='⏸ Stop';autoInterval=setInterval(()=>{if(!isRolling&&!document.getElementById('lucky-overlay').classList.contains('show'))doRoll();},Math.max(80,getSpeed()));}
+}
+
+// ══════════════════
+//  COLLECTION
+// ══════════════════
+function updateCollection(){
+  const grid=document.getElementById('inv-grid');grid.innerHTML='';
+  const keys=Object.keys(inventory).sort((a,b)=>{const A=AURAS.find(x=>x.name===a),B=AURAS.find(x=>x.name===b);return B.tier-A.tier;});
+  if(!keys.length){grid.innerHTML='<div style="color:var(--muted);font-size:.82rem;grid-column:1/-1;text-align:center;padding:30px;font-family:Cinzel,serif;">No auras discovered yet...</div>';return;}
+  for(const name of keys){
+    const au=AURAS.find(a=>a.name===name);
+    const card=document.createElement('div');
+    card.className='inv-card';
+    card.style.setProperty('--c',au.color);
+    card.style.setProperty('--c2',au.glow);
+    // count
+    const cnt=document.createElement('div');cnt.className='ic-count';cnt.textContent='×'+inventory[name];
+    // emoji
+    const em=document.createElement('div');em.className='ic-emoji';em.textContent=au.emoji;
+    // name
+    const nm=document.createElement('div');nm.className='ic-name';nm.textContent=au.name;
+    // rarity
+    const rar=document.createElement('div');rar.className='ic-rarity';rar.style.color=au.color;rar.style.opacity='.85';rar.textContent=au.rarity;
+    // odds
+    const odds=document.createElement('div');odds.className='ic-rarity';odds.textContent=fmt(au);
+    // replay button
+    const rep=document.createElement('button');
+    rep.className='ic-replay';
+    rep.textContent='▶ Replay';
+    rep.addEventListener('click',function(e){e.stopPropagation();showCutscene(au,true);});
+    card.append(cnt,em,nm,rar,odds,rep);
+    grid.appendChild(card);
+  }
+}
+
+// ══════════════════
+//  SHOP
+// ══════════════════
+function buildShopCard(eq, mini=false){
+  const owned=ownedEquip.has(eq.id),isEq=equippedItems.includes(eq.id),canAfford=tokens>=eq.price;
+
+  const card=document.createElement('div');
+  card.className='shop-card';
+  card.style.setProperty('--ec',eq.color);
+
+  // Top row
+  const top=document.createElement('div'); top.className='sc-top';
+  const icon=document.createElement('div'); icon.className='sc-icon'; icon.textContent=eq.icon;
+  const info=document.createElement('div');
+  const nm=document.createElement('div'); nm.className='sc-name'; nm.textContent=eq.name;
+  const tp=document.createElement('div'); tp.className='sc-type';
+  tp.textContent=mini?(isEq?'⚡ EQUIPPED':'Owned'):'Equipment';
+  info.append(nm,tp); top.append(icon,info); card.appendChild(top);
+
+  if(!mini){
+    const desc=document.createElement('div'); desc.className='sc-desc'; desc.textContent=eq.desc;
+    card.appendChild(desc);
+  }
+
+  const bonus=document.createElement('div'); bonus.className='sc-bonus'; bonus.textContent='✦ '+eq.bonus;
+  card.appendChild(bonus);
+
+  const footer=document.createElement('div'); footer.className='sc-footer';
+
+  if(!mini){
+    const price=document.createElement('div'); price.className='sc-price';
+    price.textContent=owned?'✔ Owned':'🪙 '+eq.price.toLocaleString();
+    footer.appendChild(price);
+  } else {
+    footer.appendChild(document.createElement('div')); // spacer
+  }
+
+  const btn=document.createElement('button');
+  btn.className='sc-buy-btn';
+  if(owned && isEq)  btn.classList.add('equipped-btn');
+  else if(owned)     btn.classList.add('owned');
+  btn.textContent = owned ? (isEq?'Unequip':'Equip') : 'Buy';
+  if(!mini && !owned && !canAfford) btn.disabled=true;
+
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(!ownedEquip.has(eq.id)){
+      if(tokens<eq.price){showToast('Not enough tokens! 🪙');return;}
+      tokens-=eq.price;
+      document.getElementById('token-count').textContent=tokens.toLocaleString();
+      ownedEquip.add(eq.id);
+      try{SFX.buy();}catch(err){}
+      showToast(eq.icon+' '+eq.name+' purchased!');
+      saveGame();
+      renderShop(); renderEquipTab();
+    } else {
+      if(equippedItems.includes(eq.id)) unequipItem(eq.id);
+      else equipItem(eq.id);
+    }
+  });
+
+  footer.appendChild(btn);
+  card.appendChild(footer);
+  return card;
+}
+
+function renderShop(){
+  const grid=document.getElementById('shop-grid');grid.innerHTML='';
+  for(const eq of EQUIPMENT)grid.appendChild(buildShopCard(eq,false));
+}
+
+// ══════════════════
+//  EQUIPMENT
+// ══════════════════
+function equipItem(id){
+  if(equippedItems.includes(id)){unequipItem(id);return;}
+  const slot=equippedItems.indexOf(null);if(slot===-1){showToast('All 4 slots full! Remove something first.');return;}
+  equippedItems[slot]=id;updateHUD();renderEquipTab();renderShop();renderArenaEquipped();
+  if(autoInterval){clearInterval(autoInterval);autoInterval=setInterval(()=>{if(!isRolling&&!document.getElementById('lucky-overlay').classList.contains('show'))doRoll();},Math.max(80,getSpeed()));}
+  const eq=EQUIPMENT.find(e=>e.id===id);saveGame();showToast(`${eq.icon} ${eq.name} equipped!`);
+}
+function unequipItem(id){
+  const i=equippedItems.indexOf(id);if(i>-1)equippedItems[i]=null;
+  updateHUD();renderEquipTab();renderShop();renderArenaEquipped();
+  if(autoInterval){clearInterval(autoInterval);autoInterval=setInterval(()=>{if(!isRolling&&!document.getElementById('lucky-overlay').classList.contains('show'))doRoll();},Math.max(80,getSpeed()));}
+  const eq=EQUIPMENT.find(e=>e.id===id);saveGame();showToast(`${eq.icon} ${eq.name} unequipped.`);
+}
+
+function renderEquipTab(){
+  const sEl=document.getElementById('equip-slots');sEl.innerHTML='';
+  for(let i=0;i<4;i++){
+    const id=equippedItems[i],sl=document.createElement('div');
+    sl.style.cssText='background:var(--panel);border:1px dashed var(--border);border-radius:12px;padding:14px;text-align:center;min-height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;';
+    if(id){
+      const eq=EQUIPMENT.find(e=>e.id===id);
+      sl.style.borderStyle='solid';sl.style.borderColor=eq.color+'88';sl.style.boxShadow=`0 0 12px ${eq.color}22`;
+      const eIcon=document.createElement('div');eIcon.style.fontSize='1.7rem';eIcon.textContent=eq.icon;
+      const eName=document.createElement('div');eName.style.cssText=`font-family:Cinzel,serif;font-size:.62rem;color:${eq.color}`;eName.textContent=eq.name;
+      const rmBtn=document.createElement('button');
+      rmBtn.textContent='Remove';
+      rmBtn.style.cssText='margin-top:6px;background:transparent;border:1px solid #444;color:var(--muted);font-size:.6rem;padding:4px 10px;border-radius:10px;cursor:pointer;font-family:Rajdhani,sans-serif;min-height:30px;touch-action:manipulation;';
+      rmBtn.addEventListener('click',function(e){e.stopPropagation();unequipItem(id);});
+      sl.append(eIcon,eName,rmBtn);
+    }
+    else{sl.innerHTML=`<div style="font-size:1.4rem;opacity:.25">＋</div><div style="font-size:.62rem;color:var(--muted);font-family:Cinzel,serif;">Empty</div>`;}
+    sEl.appendChild(sl);
+  }
+  const og=document.getElementById('owned-grid');og.innerHTML='';
+  if(!ownedEquip.size){og.innerHTML='<div style="color:var(--muted);font-size:.82rem;text-align:center;padding:20px;font-family:Cinzel,serif;">No equipment owned. Buy from the Shop tab!</div>';return;}
+  for(const id of ownedEquip){const eq=EQUIPMENT.find(e=>e.id===id);og.appendChild(buildShopCard(eq,true));}
+}
+
+function renderArenaEquipped(){
+  const d=document.getElementById('equipped-display');d.innerHTML='';
+  for(let i=0;i<4;i++){const sl=document.createElement('div');sl.className='eq-slot';const id=equippedItems[i];if(id){const eq=EQUIPMENT.find(e=>e.id===id);sl.classList.add('filled');sl.style.setProperty('--ec',eq.color);sl.textContent=eq.icon;sl.innerHTML+=`<div class="eq-tip">${eq.name} — ${eq.bonus}</div>`;}else{sl.textContent='·';sl.style.opacity='.25';}d.appendChild(sl);}
+}
+
+// ══════════════════
+//  TABS
+// ══════════════════
+function switchTab(name){
+  const names=['roll','collection','shop','equipment'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='shop')renderShop();
+  if(name==='equipment')renderEquipTab();
+  if(name==='collection')updateCollection();
+}
+
+// ══════════════════
+//  TOAST
+// ══════════════════
+let toastT=null;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');if(toastT)clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ══════════════════
+//  STARS
+// ══════════════════
+(function(){const c=document.getElementById('stars');for(let i=0;i<200;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2+.5;s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--del:${Math.random()*4}s;--min:${.05+Math.random()*.1};--max:${.5+Math.random()*.5};`;c.appendChild(s);}})();
+
+
+
+// ══════════════════════════════════════════════
+//  CUTSCENE SYSTEM
+// ══════════════════════════════════════════════
+let csAnim=null;
+
+const CS_CONFIG={
+  0:{bgOpacity:.7,rays:false,scanlines:false,glitch:false,atmosphere:'',orbitCount:0,orbitR:0,label:'AURA FOUND'},
+  1:{bgOpacity:.75,rays:false,scanlines:false,glitch:false,atmosphere:'',orbitCount:3,orbitR:115,label:'UNCOMMON AURA'},
+  2:{bgOpacity:.82,rays:true,raysOpacity:.3,scanlines:false,glitch:false,atmosphere:'',orbitCount:5,orbitR:118,label:'RARE AURA'},
+  3:{bgOpacity:.88,rays:true,raysOpacity:.5,scanlines:false,glitch:false,atmosphere:'radial-gradient(ellipse at 50% 60%,var(--cc)22,transparent 70%)',orbitCount:7,orbitR:122,label:'✦ EPIC AURA ✦'},
+  4:{bgOpacity:.9,rays:true,raysOpacity:.7,scanlines:false,glitch:false,atmosphere:'radial-gradient(ellipse at 50% 50%,var(--cc)33,transparent 65%)',orbitCount:10,orbitR:125,label:'⭐ LEGENDARY ⭐'},
+  5:{bgOpacity:.92,rays:true,raysOpacity:.9,scanlines:false,glitch:false,atmosphere:'radial-gradient(circle,var(--cc)44,transparent 60%)',orbitCount:14,orbitR:128,label:'✨ DIVINE AURA ✨'},
+  6:{bgOpacity:.95,rays:true,raysOpacity:1,scanlines:false,glitch:false,atmosphere:'radial-gradient(circle,var(--cc)55,#f0c06033 50%,transparent 70%)',orbitCount:20,orbitR:132,label:'👑 GODLY AURA 👑'},
+  7:{bgOpacity:.88,rays:true,raysOpacity:.6,scanlines:true,glitch:false,atmosphere:'radial-gradient(ellipse,var(--cc)33,transparent 60%)',orbitCount:8,orbitR:120,label:'🔮 SECRET AURA 🔮'},
+  8:{bgOpacity:.95,rays:true,raysOpacity:.8,scanlines:true,glitch:true,atmosphere:'radial-gradient(ellipse,#c0000055,transparent 60%)',orbitCount:6,orbitR:118,label:'💀 CURSED AURA 💀'},
+  9:{bgOpacity:.9,rays:true,raysOpacity:1,scanlines:false,glitch:false,atmosphere:'conic-gradient(from 0deg,#ff000022,#ff800022,#ffff0022,#00ff0022,#0000ff22,#ff00ff22,#ff000022)',orbitCount:24,orbitR:130,label:'🌟 PRISMATIC 🌟'},
+  10:{bgOpacity:.97,rays:true,raysOpacity:1,scanlines:false,glitch:true,atmosphere:'radial-gradient(circle,var(--cc)66,transparent 55%)',orbitCount:30,orbitR:135,label:'🔱 TRANSCENDENT 🔱'},
+  11:{bgOpacity:1,rays:false,scanlines:true,glitch:true,atmosphere:'radial-gradient(circle,#ffffff11 0%,#000 60%)',orbitCount:0,orbitR:0,label:'⬛ NULL ⬛'},
+  12:{bgOpacity:1,rays:true,raysOpacity:1,scanlines:true,glitch:true,atmosphere:'radial-gradient(circle,#ff208088 0%,#200 60%)',orbitCount:40,orbitR:138,label:'Ω OMEGA Ω'},
+  13:{bgOpacity:1,rays:true,raysOpacity:1,scanlines:false,glitch:true,atmosphere:'radial-gradient(circle,#80ffff88 0%,#004 55%)',orbitCount:60,orbitR:142,label:'∞ ETERNAL ∞'},
+  14:{bgOpacity:1,rays:true,raysOpacity:1,scanlines:false,glitch:false,atmosphere:'conic-gradient(from 0deg,#ffff0044,#ff800044,#ff008044,#0080ff44,#8000ff44,#ffff0044)',orbitCount:80,orbitR:148,label:'✦ GENESIS ✦'},
+};
+
+function showCutscene(aura, isReplay=false){
+  const cs=document.getElementById('cutscene');
+  const cfg=CS_CONFIG[aura.tier]||CS_CONFIG[0];
+  const c=aura.color, g=aura.glow;
+
+  // CSS vars
+  cs.style.setProperty('--cc', c);
+  cs.style.setProperty('--cr', c+'33');
+
+  // bg
+  document.getElementById('cs-bg').style.opacity=cfg.bgOpacity;
+
+  // rays
+  const rays=document.getElementById('cs-rays');
+  rays.style.opacity=cfg.rays?cfg.raysOpacity:0;
+  rays.style.setProperty('--cr', c+'33');
+
+  // atmosphere
+  const atm=document.getElementById('cs-atmosphere');
+  const atmStyle=cfg.atmosphere.replace(/var\(--cc\)/g,c);
+  atm.style.background=atmStyle||'none';
+
+  // scanlines
+  document.getElementById('cs-scanlines').style.display=cfg.scanlines?'block':'none';
+
+  // glitch bars
+  const glitch=document.getElementById('cs-glitch');
+  glitch.innerHTML='';
+  if(cfg.glitch){
+    for(let i=0;i<8;i++){
+      const bar=document.createElement('div');bar.className='cs-glitch-bar';
+      bar.style.setProperty('--gd',(1.5+Math.random()*3)+'s');
+      bar.style.setProperty('--gdel',(Math.random()*2)+'s');
+      bar.style.setProperty('--gt',(10+Math.random()*80)+'%');
+      bar.style.background=i%2===0?c:'#ffffff';
+      glitch.appendChild(bar);
+    }
+  }
+
+  // ring
+  const wrap=document.getElementById('cs-ring-wrap');
+  wrap.className='cs-ring-wrap t'+aura.tier;
+  wrap.style.setProperty('--cc',c);
+  document.getElementById('cs-ring-outer').style.background=`conic-gradient(from 0deg,${c},transparent,${c}) border-box`;
+  document.getElementById('cs-ring-outer2').style.borderColor=c;
+  const ri=document.getElementById('cs-ring-inner');
+  ri.textContent=aura.emoji;
+  ri.style.background=`radial-gradient(circle,${c}44 0%,#03030a 70%)`;
+  ri.style.boxShadow=`0 0 60px ${g} inset,0 0 100px ${g}`;
+  ri.style.fontSize=aura.tier>=9?'4.5rem':'5rem';
+
+  // orbit particles
+  const cp=document.getElementById('cs-particles');
+  cp.innerHTML='';
+  if(cfg.orbitCount>0){
+    for(let i=0;i<cfg.orbitCount;i++){
+      const p=document.createElement('div');p.className='cs-orbit-particle';
+      const angle=(360/cfg.orbitCount)*i;
+      const size=aura.tier>=5?8:aura.tier>=3?6:5;
+      p.style.setProperty('--oa',angle+'deg');
+      p.style.setProperty('--or',cfg.orbitR+'px');
+      p.style.setProperty('--od',(2+Math.random()*.8)+'s');
+      p.style.setProperty('--odel',(Math.random()*.5)+'s');
+      p.style.setProperty('--cc',c);
+      p.style.width=size+'px';p.style.height=size+'px';
+      p.style.top='50%';p.style.left='50%';
+      p.style.marginTop='-'+(size/2)+'px';p.style.marginLeft='-'+(size/2)+'px';
+      cp.appendChild(p);
+    }
+  }
+
+  // text
+  document.getElementById('cs-label').textContent=cfg.label;
+  document.getElementById('cs-label').style.color=c;
+  document.getElementById('cs-name').textContent=aura.name;
+  document.getElementById('cs-name').style.color=c;
+  document.getElementById('cs-name').style.textShadow=`0 0 40px ${g},0 0 80px ${g}`;
+  document.getElementById('cs-rarity-badge').textContent=aura.rarity;
+  document.getElementById('cs-rarity-badge').style.color=c;
+  document.getElementById('cs-rarity-badge').style.borderColor=c;
+  document.getElementById('cs-rarity-badge').style.background=c+'18';
+  document.getElementById('cs-odds').textContent=fmt(aura);
+
+  // prismatic rainbow ring animation
+  if(aura.tier===9){
+    let hue=0;
+    if(csAnim)cancelAnimationFrame(csAnim);
+    function animPrismatic(){
+      hue=(hue+1)%360;
+      const h=`hsl(${hue},100%,70%)`;
+      ri.style.filter=`hue-rotate(${hue}deg)`;
+      csAnim=requestAnimationFrame(animPrismatic);
+    }
+    animPrismatic();
+  } else {
+    if(csAnim){cancelAnimationFrame(csAnim);csAnim=null;}
+    ri.style.filter='';
+  }
+
+  // sound
+  if(isReplay) playSound(aura.tier);
+
+  // show
+  cs.classList.add('active');
+
+  // close button
+  const closeBtn=document.getElementById('cs-close');
+  closeBtn.onclick=()=>closeCutscene();
+}
+
+function closeCutscene(){
+  const cs=document.getElementById('cutscene');
+  cs.classList.remove('active');
+  if(csAnim){cancelAnimationFrame(csAnim);csAnim=null;}
+  document.getElementById('cs-ring-inner').style.filter='';
+  document.getElementById('cs-particles').innerHTML='';
+  document.getElementById('cs-glitch').innerHTML='';
+}
+
+// close on backdrop click
+document.getElementById('cutscene').addEventListener('click', function(e){
+  if(e.target===this||e.target===document.getElementById('cs-bg')||e.target===document.getElementById('cs-vignette'))
+    closeCutscene();
+});
+
+// ══════════════════════════════
+//  SAVE / LOAD
+// ══════════════════════════════
+const SAVE_KEY='aura_rng_v2';
+
+function saveGame(){
+  try{
+    const data={
+      rolls,tokens,totalTokensEarned,baseLuck,rarestTier,
+      inventory:{...inventory},
+      ownedEquip:[...ownedEquip],
+      equippedItems:[...equippedItems],
+      rarestHTML:document.getElementById('stat-rarest').innerHTML,
+    };
+    localStorage.setItem(SAVE_KEY,JSON.stringify(data));
+    // flash save dot
+    const ind=document.getElementById('save-ind');
+    if(ind){ind.style.display='inline-block';ind.className='save-dot';
+      setTimeout(()=>{ind.style.display='none';},1200);}
+  }catch(e){}
+}
+
+function loadGame(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    rolls=d.rolls||0;
+    tokens=d.tokens||0;
+    totalTokensEarned=d.totalTokensEarned||0;
+    baseLuck=d.baseLuck||1;
+    rarestTier=d.rarestTier??-1;
+    Object.assign(inventory,d.inventory||{});
+    (d.ownedEquip||[]).forEach(id=>ownedEquip.add(id));
+    (d.equippedItems||[]).forEach((id,i)=>{equippedItems[i]=id||null;});
+    // Update stat elements
+    document.getElementById('stat-rolls').textContent=rolls.toLocaleString();
+    document.getElementById('stat-unique').textContent=Object.keys(inventory).length;
+    document.getElementById('token-count').textContent=tokens.toLocaleString();
+    document.getElementById('stat-tokens-earned').textContent=totalTokensEarned.toLocaleString();
+    if(d.rarestHTML)document.getElementById('stat-rarest').innerHTML=d.rarestHTML;
+    updateHUD();
+    updateCollection();
+    renderArenaEquipped();
+    showToast('💾 Save loaded!');
+  }catch(e){console.warn('Load failed',e);}
+}
+
+// Init
+loadGame();
+renderArenaEquipped();
+updateHUD();
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&!document.getElementById('lucky-overlay').classList.contains('show')){e.preventDefault();doRoll();}
+  if(e.code==='Escape'){dismissLucky();closeCutscene();}
+});
+</script>
+</body>
+</html>
