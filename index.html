@@ -263,20 +263,20 @@ header p{color:var(--muted);font-size:.78rem;letter-spacing:.2em;text-transform:
     ⚡ Speed: <span class="tk" id="speed-display">400ms</span>
     &nbsp;|&nbsp;
     🍀 Luck: <span class="tk" id="luck-display">1.0×</span>
-  &nbsp;<button onclick="saveGame()" style="background:transparent;border:1px solid #3a3a5a;color:var(--muted);font-family:Cinzel,serif;font-size:.65rem;padding:3px 10px;border-radius:8px;cursor:pointer;touch-action:manipulation;">💾 Save</button></div>
+  &nbsp;<button onclick="saveGame()" style="background:transparent;border:1px solid #3a3a5a;color:var(--muted);font-family:Cinzel,serif;font-size:.65rem;padding:3px 10px;border-radius:8px;cursor:pointer;touch-action:manipulation;" data-i18n="saveBtn">💾 Save</button></div>
 
   <div class="stats-bar">
-    <div class="stat-box"><div class="label">Rolls</div><div class="value" id="stat-rolls">0</div></div>
-    <div class="stat-box"><div class="label">Unique Auras</div><div class="value" id="stat-unique">0</div></div>
-    <div class="stat-box"><div class="label">Rarest Roll</div><div class="value" id="stat-rarest">—</div></div>
-    <div class="stat-box"><div class="label">Tokens Earned</div><div class="value" id="stat-tokens-earned">0</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statRolls">Rolls</div><div class="value" id="stat-rolls">0</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statUnique">Unique Auras</div><div class="value" id="stat-unique">0</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statRarest">Rarest Roll</div><div class="value" id="stat-rarest">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statTokens">Tokens Earned</div><div class="value" id="stat-tokens-earned">0</div></div>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('roll')">⚄ Roll</button>
-    <button class="tab-btn" onclick="switchTab('collection')">📦 Collection</button>
-    <button class="tab-btn" onclick="switchTab('shop')">🛒 Shop</button>
-    <button class="tab-btn" onclick="switchTab('equipment')">⚔️ Equipment</button>
+    <button class="tab-btn active" onclick="switchTab('roll')" data-i18n="tabRoll">⚄ Roll</button>
+    <button class="tab-btn" onclick="switchTab('collection')" data-i18n="tabCollection">📦 Collection</button>
+    <button class="tab-btn" onclick="switchTab('shop')" data-i18n="tabShop">🛒 Shop</button>
+    <button class="tab-btn" onclick="switchTab('equipment')" data-i18n="tabEquip">⚔️ Equipment</button>
   </div>
 
   <!-- ROLL TAB -->
@@ -294,12 +294,12 @@ header p{color:var(--muted);font-size:.78rem;letter-spacing:.2em;text-transform:
         <div class="aura-rarity" id="aura-rarity">— awaiting fate —</div>
       </div>
       <div class="btn-row">
-        <button class="roll-btn" id="roll-btn" onclick="doRoll()">✦ ROLL ✦</button>
-        <button class="auto-btn" id="auto-btn" onclick="toggleAuto()">Auto Roll</button>
+        <button class="roll-btn" id="roll-btn" onclick="doRoll()" data-i18n="rollBtn">✦ ROLL ✦</button>
+        <button class="auto-btn" id="auto-btn" onclick="toggleAuto()" data-i18n="autoBtn">Auto Roll</button>
       </div>
     </div>
     <br>
-    <div class="section-title">Roll Log</div>
+    <div class="section-title" data-i18n="logTitle">Roll Log</div>
     <div class="log-box" id="log-box"></div>
   </div>
 
@@ -307,21 +307,21 @@ header p{color:var(--muted);font-size:.78rem;letter-spacing:.2em;text-transform:
   <div class="tab-panel" id="tab-collection">
     <div class="section-title">Aura Collection</div>
     <div class="inv-grid" id="inv-grid">
-      <div style="color:var(--muted);font-size:.82rem;grid-column:1/-1;text-align:center;padding:30px;font-family:Cinzel,serif;">No auras discovered yet...</div>
+      <div style="color:var(--muted);font-size:.82rem;grid-column:1/-1;text-align:center;padding:30px;font-family:Cinzel,serif;"><span data-i18n="noAuras">No auras discovered yet...</span></div>
     </div>
   </div>
 
   <!-- SHOP TAB -->
   <div class="tab-panel" id="tab-shop">
-    <div class="section-title">Equipment Shop — spend tokens to gain luck &amp; speed</div>
+    <div class="section-title" data-i18n="shopTitle">Equipment Shop — spend tokens to gain luck &amp; speed</div>
     <div class="shop-grid" id="shop-grid"></div>
   </div>
 
   <!-- EQUIPMENT TAB -->
   <div class="tab-panel" id="tab-equipment">
-    <div class="section-title">Equipped <span style="color:var(--text);font-size:.75rem">(4 slots)</span></div>
+    <div class="section-title" data-i18n="equippedSlots">Equipped (4 slots)</div>
     <div id="equip-slots" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;"></div>
-    <div class="section-title">Owned Items</div>
+    <div class="section-title" data-i18n="ownedItems">Owned Items</div>
     <div class="shop-grid" id="owned-grid"></div>
   </div>
 </div>
@@ -346,7 +346,7 @@ header p{color:var(--muted);font-size:.78rem;letter-spacing:.2em;text-transform:
     <div class="cs-name" id="cs-name">—</div>
     <div class="cs-rarity-badge" id="cs-rarity-badge">Common</div>
     <div class="cs-odds" id="cs-odds">1 in 3</div>
-    <button class="cs-close" id="cs-close">✦ Close ✦</button>
+    <button class="cs-close" id="cs-close" data-i18n="closeBtn">✦ Close ✦</button>
   </div>
 </div>
 
@@ -357,187 +357,264 @@ header p{color:var(--muted);font-size:.78rem;letter-spacing:.2em;text-transform:
     <div class="lucky-title" id="lucky-title">AURA</div>
     <div class="lucky-rarity" id="lucky-rarity">1 in ∞</div>
     <div class="lucky-token-reward" id="lucky-token-reward">+0 🪙</div>
-    <button class="lucky-dismiss" onclick="dismissLucky()">Continue Rolling</button>
+    <button class="lucky-dismiss" onclick="dismissLucky()" data-i18n="continueBtn">Continue Rolling</button>
   </div>
 </div>
 
 <script>
+
+// ══════════════════════════════
+//  I18N
+// ══════════════════════════════
+const isFR = (navigator.language||navigator.userLanguage||'').toLowerCase().startsWith('fr');
+const T = {
+  // UI tabs
+  tabRoll:       isFR ? '⚄ Roll'        : '⚄ Roll',
+  tabCollection: isFR ? '📦 Collection'  : '📦 Collection',
+  tabShop:       isFR ? '🛒 Boutique'    : '🛒 Shop',
+  tabEquip:      isFR ? '⚔️ Équipement'  : '⚔️ Equipment',
+  // Stats
+  statRolls:     isFR ? 'Rolls'          : 'Rolls',
+  statUnique:    isFR ? 'Auras uniques'  : 'Unique Auras',
+  statRarest:    isFR ? 'Plus rare'      : 'Rarest Roll',
+  statTokens:    isFR ? 'Tokens gagnés'  : 'Tokens Earned',
+  // HUD
+  speedLabel:    isFR ? '⚡ Vitesse'     : '⚡ Speed',
+  luckLabel:     isFR ? '🍀 Chance'      : '🍀 Luck',
+  saveBtn:       isFR ? '💾 Sauvegarder' : '💾 Save',
+  // Buttons
+  rollBtn:       isFR ? '✦ LANCER ✦'    : '✦ ROLL ✦',
+  autoBtn:       isFR ? 'Auto Lancer'    : 'Auto Roll',
+  autoStop:      isFR ? '⏸ Stop'        : '⏸ Stop',
+  // Shop
+  shopTitle:     isFR ? 'Boutique — dépensez des tokens pour plus de chance et de vitesse' : 'Equipment Shop — spend tokens to gain luck & speed',
+  shopType:      isFR ? 'Équipement'     : 'Equipment',
+  shopOwned:     isFR ? '✔ Possédé'      : '✔ Owned',
+  shopBuy:       isFR ? 'Acheter'        : 'Buy',
+  shopEquip:     isFR ? 'Équiper'        : 'Equip',
+  shopUnequip:   isFR ? 'Retirer'        : 'Unequip',
+  notEnough:     isFR ? 'Pas assez de tokens ! 🪙' : 'Not enough tokens! 🪙',
+  allSlotsFull:  isFR ? 'Les 4 emplacements sont pleins !' : 'All 4 slots full! Remove something first.',
+  purchased:     isFR ? ' acheté !'      : ' purchased!',
+  equipped:      isFR ? ' équipé !'      : ' equipped!',
+  unequipped:    isFR ? ' retiré.'       : ' unequipped.',
+  saveLoaded:    isFR ? '💾 Sauvegarde chargée !' : '💾 Save loaded!',
+  // Equipment tab
+  equippedSlots: isFR ? 'Équipé (4 emplacements)' : 'Equipped (4 slots)',
+  ownedItems:    isFR ? 'Objets possédés' : 'Owned Items',
+  emptySlot:     isFR ? 'Vide'           : 'Empty',
+  removeBtn:     isFR ? 'Retirer'        : 'Remove',
+  noEquip:       isFR ? 'Aucun équipement. Achetez dans la Boutique !' : 'No equipment owned. Buy from the Shop tab!',
+  equippedLabel: isFR ? '⚡ ÉQUIPÉ'      : '⚡ EQUIPPED',
+  // Collection
+  noAuras:       isFR ? 'Aucune aura découverte...' : '<span data-i18n="noAuras">No auras discovered yet...</span>',
+  replayBtn:     isFR ? '▶ Revoir'       : '▶ Replay',
+  // Lucky overlay
+  continueBtn:   isFR ? 'Continuer à lancer' : 'Continue Rolling',
+  auraObtained:  isFR ? 'Aura obtenue !'  : 'Aura obtained!',
+  // Cutscene
+  closeBtn:      isFR ? '✦ Fermer ✦'     : '✦ Close ✦',
+  // Log label
+  logTitle:      isFR ? 'Derniers rolls'  : 'Roll Log',
+  moreRolls:     isFR ? 'Voir les rolls précédents' : 'Show earlier rolls',
+  // Rarity labels (kept in English by convention like Sol's RNG, but translateable)
+  // Toast
+  slotsFullMsg:  isFR ? 'Les 4 emplacements sont pleins ! Retirez quelque chose.' : 'All 4 slots full! Remove something first.',
+};
+
+// Apply static text to DOM after load
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    if(T[key]!==undefined) el.textContent=T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+    const key=el.getAttribute('data-i18n-html');
+    if(T[key]!==undefined) el.innerHTML=T[key];
+  });
+}
+
+
+// Aura display helpers (i18n)
+function auraName(a){ return isFR&&a.nameFR?a.nameFR:a.name; }
+function auraRarity(a){ return isFR&&a.rarityFR?a.rarityFR:a.rarity; }
+function fmtOdds(a){ return (isFR?'1 sur ':'1 in ')+Math.round(1/a.chance).toLocaleString(); }
 // ══════════════════
 //  AURA DATA
 // ══════════════════
 const AURAS=[
   // Common (0)
-  {name:"Cloudy",      emoji:"☁️", color:"#a0b8c8",glow:"#a0b8c844",rarity:"Common",      chance:1/3,       tier:0,tokens:1},
-  {name:"Windy",       emoji:"🌬️", color:"#80c8d8",glow:"#80c8d844",rarity:"Common",      chance:1/4,       tier:0,tokens:1},
-  {name:"Ember",       emoji:"🔥", color:"#f08040",glow:"#f0804044",rarity:"Common",      chance:1/5,       tier:0,tokens:1},
-  {name:"Forest",      emoji:"🌿", color:"#60c060",glow:"#60c06044",rarity:"Common",      chance:1/6,       tier:0,tokens:1},
-  {name:"Sandy",       emoji:"🏜️", color:"#d4a860",glow:"#d4a86044",rarity:"Common",      chance:1/7,       tier:0,tokens:1},
+  {name:"Cloudy",      emoji:"☁️", color:"#a0b8c8",glow:"#a0b8c844",rarity:"Common",      chance:1/3,       tier:0,tokens:1,nameFR:"Nuageux",rarityFR:"Commun"},
+  {name:"Windy",       emoji:"🌬️", color:"#80c8d8",glow:"#80c8d844",rarity:"Common",      chance:1/4,       tier:0,tokens:1,nameFR:"Venteux",rarityFR:"Commun"},
+  {name:"Ember",       emoji:"🔥", color:"#f08040",glow:"#f0804044",rarity:"Common",      chance:1/5,       tier:0,tokens:1,nameFR:"Braise",rarityFR:"Commun"},
+  {name:"Forest",      emoji:"🌿", color:"#60c060",glow:"#60c06044",rarity:"Common",      chance:1/6,       tier:0,tokens:1,nameFR:"Forêt",rarityFR:"Commun"},
+  {name:"Sandy",       emoji:"🏜️", color:"#d4a860",glow:"#d4a86044",rarity:"Common",      chance:1/7,       tier:0,tokens:1,nameFR:"Sableux",rarityFR:"Commun"},
   // Uncommon (1)
-  {name:"Frost",       emoji:"❄️", color:"#80d0ff",glow:"#80d0ff44",rarity:"Uncommon",    chance:1/15,      tier:1,tokens:1},
-  {name:"Thunder",     emoji:"⚡", color:"#ffee44",glow:"#ffee4444",rarity:"Uncommon",    chance:1/20,      tier:1,tokens:1},
-  {name:"Shadow",      emoji:"🌑", color:"#9070c0",glow:"#9070c044",rarity:"Uncommon",    chance:1/25,      tier:1,tokens:1},
-  {name:"Rose",        emoji:"🌹", color:"#ff6080",glow:"#ff608044",rarity:"Uncommon",    chance:1/30,      tier:1,tokens:1},
-  {name:"Ocean",       emoji:"🌊", color:"#0090d0",glow:"#0090d044",rarity:"Uncommon",    chance:1/25,      tier:1,tokens:1},
-  {name:"Magma",       emoji:"🫧", color:"#ff6030",glow:"#ff603044",rarity:"Uncommon",    chance:1/22,      tier:1,tokens:1},
+  {name:"Frost",       emoji:"❄️", color:"#80d0ff",glow:"#80d0ff44",rarity:"Uncommon",    chance:1/15,      tier:1,tokens:1,nameFR:"Givre",rarityFR:"Peu commun"},
+  {name:"Thunder",     emoji:"⚡", color:"#ffee44",glow:"#ffee4444",rarity:"Uncommon",    chance:1/20,      tier:1,tokens:1,nameFR:"Foudre",rarityFR:"Peu commun"},
+  {name:"Shadow",      emoji:"🌑", color:"#9070c0",glow:"#9070c044",rarity:"Uncommon",    chance:1/25,      tier:1,tokens:1,nameFR:"Ombre",rarityFR:"Peu commun"},
+  {name:"Rose",        emoji:"🌹", color:"#ff6080",glow:"#ff608044",rarity:"Uncommon",    chance:1/30,      tier:1,tokens:1,nameFR:"Rose",rarityFR:"Peu commun"},
+  {name:"Ocean",       emoji:"🌊", color:"#0090d0",glow:"#0090d044",rarity:"Uncommon",    chance:1/25,      tier:1,tokens:1,nameFR:"Océan",rarityFR:"Peu commun"},
+  {name:"Magma",       emoji:"🫧", color:"#ff6030",glow:"#ff603044",rarity:"Uncommon",    chance:1/22,      tier:1,tokens:1,nameFR:"Magma",rarityFR:"Peu commun"},
   // Rare (2)
-  {name:"Phantom",     emoji:"👻", color:"#c0a0ff",glow:"#c0a0ff55",rarity:"Rare",        chance:1/75,      tier:2,tokens:3},
-  {name:"Glacial",     emoji:"🧊", color:"#00cfff",glow:"#00cfff55",rarity:"Rare",        chance:1/100,     tier:2,tokens:3},
-  {name:"Volcanic",    emoji:"🌋", color:"#ff4020",glow:"#ff402055",rarity:"Rare",        chance:1/150,     tier:2,tokens:3},
-  {name:"Spectral",    emoji:"🌈", color:"#ff80ff",glow:"#ff80ff55",rarity:"Rare",        chance:1/200,     tier:2,tokens:3},
-  {name:"Cosmic",      emoji:"🌙", color:"#8040ff",glow:"#8040ff55",rarity:"Rare",        chance:1/120,     tier:2,tokens:3},
-  {name:"Miasma",      emoji:"🟣", color:"#a030a0",glow:"#a030a055",rarity:"Rare",        chance:1/180,     tier:2,tokens:3},
+  {name:"Phantom",     emoji:"👻", color:"#c0a0ff",glow:"#c0a0ff55",rarity:"Rare",        chance:1/75,      tier:2,tokens:3,nameFR:"Fantôme",rarityFR:"Rare"},
+  {name:"Glacial",     emoji:"🧊", color:"#00cfff",glow:"#00cfff55",rarity:"Rare",        chance:1/100,     tier:2,tokens:3,nameFR:"Glacial",rarityFR:"Rare"},
+  {name:"Volcanic",    emoji:"🌋", color:"#ff4020",glow:"#ff402055",rarity:"Rare",        chance:1/150,     tier:2,tokens:3,nameFR:"Volcanique",rarityFR:"Rare"},
+  {name:"Spectral",    emoji:"🌈", color:"#ff80ff",glow:"#ff80ff55",rarity:"Rare",        chance:1/200,     tier:2,tokens:3,nameFR:"Spectral",rarityFR:"Rare"},
+  {name:"Cosmic",      emoji:"🌙", color:"#8040ff",glow:"#8040ff55",rarity:"Rare",        chance:1/120,     tier:2,tokens:3,nameFR:"Cosmique",rarityFR:"Rare"},
+  {name:"Miasma",      emoji:"🟣", color:"#a030a0",glow:"#a030a055",rarity:"Rare",        chance:1/180,     tier:2,tokens:3,nameFR:"Miasme",rarityFR:"Rare"},
   // Epic (3)
-  {name:"Abyssal",     emoji:"🕳️", color:"#5020c0",glow:"#5020c066",rarity:"Epic",        chance:1/500,     tier:3,tokens:10},
-  {name:"Aurora",      emoji:"🌌", color:"#40ffc0",glow:"#40ffc066",rarity:"Epic",        chance:1/750,     tier:3,tokens:10},
-  {name:"Infernal",    emoji:"😈", color:"#ff2020",glow:"#ff202066",rarity:"Epic",        chance:1/1000,    tier:3,tokens:10},
-  {name:"Crystal",     emoji:"💎", color:"#80ffff",glow:"#80ffff66",rarity:"Epic",        chance:1/800,     tier:3,tokens:10},
-  {name:"Tempest",     emoji:"🌪️", color:"#60a0ff",glow:"#60a0ff66",rarity:"Epic",        chance:1/600,     tier:3,tokens:10},
-  {name:"Nether",      emoji:"🧿", color:"#2040a0",glow:"#2040a066",rarity:"Epic",        chance:1/900,     tier:3,tokens:10},
+  {name:"Abyssal",     emoji:"🕳️", color:"#5020c0",glow:"#5020c066",rarity:"Epic",        chance:1/500,     tier:3,tokens:10,nameFR:"Abyssal",rarityFR:"Épique"},
+  {name:"Aurora",      emoji:"🌌", color:"#40ffc0",glow:"#40ffc066",rarity:"Epic",        chance:1/750,     tier:3,tokens:10,nameFR:"Aurore",rarityFR:"Épique"},
+  {name:"Infernal",    emoji:"😈", color:"#ff2020",glow:"#ff202066",rarity:"Epic",        chance:1/1000,    tier:3,tokens:10,nameFR:"Infernal",rarityFR:"Épique"},
+  {name:"Crystal",     emoji:"💎", color:"#80ffff",glow:"#80ffff66",rarity:"Epic",        chance:1/800,     tier:3,tokens:10,nameFR:"Cristal",rarityFR:"Épique"},
+  {name:"Tempest",     emoji:"🌪️", color:"#60a0ff",glow:"#60a0ff66",rarity:"Epic",        chance:1/600,     tier:3,tokens:10,nameFR:"Tempête",rarityFR:"Épique"},
+  {name:"Nether",      emoji:"🧿", color:"#2040a0",glow:"#2040a066",rarity:"Epic",        chance:1/900,     tier:3,tokens:10,nameFR:"Nether",rarityFR:"Épique"},
   // Legendary (4)
-  {name:"Celestial",   emoji:"⭐", color:"#ffe080",glow:"#ffe08088",rarity:"Legendary",   chance:1/2500,    tier:4,tokens:30},
-  {name:"Void",        emoji:"🌀", color:"#ff00ff",glow:"#ff00ff88",rarity:"Legendary",   chance:1/5000,    tier:4,tokens:30},
-  {name:"Chronos",     emoji:"⏳", color:"#80ffff",glow:"#80ffff88",rarity:"Legendary",   chance:1/7500,    tier:4,tokens:30},
-  {name:"Draconic",    emoji:"🐉", color:"#ff8000",glow:"#ff800088",rarity:"Legendary",   chance:1/4000,    tier:4,tokens:30},
-  {name:"Glacial King",emoji:"🏔️", color:"#c0f0ff",glow:"#c0f0ff88",rarity:"Legendary",   chance:1/6000,    tier:4,tokens:30},
+  {name:"Celestial",   emoji:"⭐", color:"#ffe080",glow:"#ffe08088",rarity:"Legendary",   chance:1/2500,    tier:4,tokens:30,nameFR:"Céleste",rarityFR:"Légendaire"},
+  {name:"Void",        emoji:"🌀", color:"#ff00ff",glow:"#ff00ff88",rarity:"Legendary",   chance:1/5000,    tier:4,tokens:30,nameFR:"Néant",rarityFR:"Légendaire"},
+  {name:"Chronos",     emoji:"⏳", color:"#80ffff",glow:"#80ffff88",rarity:"Legendary",   chance:1/7500,    tier:4,tokens:30,nameFR:"Chronos",rarityFR:"Légendaire"},
+  {name:"Draconic",    emoji:"🐉", color:"#ff8000",glow:"#ff800088",rarity:"Legendary",   chance:1/4000,    tier:4,tokens:30,nameFR:"Draconique",rarityFR:"Légendaire"},
+  {name:"Glacial King",emoji:"🏔️", color:"#c0f0ff",glow:"#c0f0ff88",rarity:"Legendary",   chance:1/6000,    tier:4,tokens:30,nameFR:"Roi Glacial",rarityFR:"Légendaire"},
   // Divine (5)
-  {name:"Divinity",    emoji:"✨", color:"#ffffff",glow:"#ffffff99",rarity:"Divine",       chance:1/25000,   tier:5,tokens:80},
-  {name:"Oblivion",    emoji:"🌠", color:"#ff80a0",glow:"#ff80a099",rarity:"Divine",       chance:1/50000,   tier:5,tokens:80},
-  {name:"Seraphic",    emoji:"👼", color:"#fff0c0",glow:"#fff0c099",rarity:"Divine",       chance:1/40000,   tier:5,tokens:80},
-  {name:"Elysian",     emoji:"🕊️", color:"#e0e0ff",glow:"#e0e0ff99",rarity:"Divine",       chance:1/35000,   tier:5,tokens:80},
+  {name:"Divinity",    emoji:"✨", color:"#ffffff",glow:"#ffffff99",rarity:"Divine",       chance:1/25000,   tier:5,tokens:80,nameFR:"Divinité",rarityFR:"Divin"},
+  {name:"Oblivion",    emoji:"🌠", color:"#ff80a0",glow:"#ff80a099",rarity:"Divine",       chance:1/50000,   tier:5,tokens:80,nameFR:"Oubli",rarityFR:"Divin"},
+  {name:"Seraphic",    emoji:"👼", color:"#fff0c0",glow:"#fff0c099",rarity:"Divine",       chance:1/40000,   tier:5,tokens:80,nameFR:"Séraphique",rarityFR:"Divin"},
+  {name:"Elysian",     emoji:"🕊️", color:"#e0e0ff",glow:"#e0e0ff99",rarity:"Divine",       chance:1/35000,   tier:5,tokens:80,nameFR:"Élyséen",rarityFR:"Divin"},
   // Godly (6)
-  {name:"Godly",       emoji:"👑", color:"#f0c060",glow:"#f0c060bb",rarity:"Godly",        chance:1/250000,  tier:6,tokens:200},
-  {name:"Olympian",    emoji:"⚡", color:"#fff080",glow:"#fff080bb",rarity:"Godly",        chance:1/500000,  tier:6,tokens:200},
+  {name:"Godly",       emoji:"👑", color:"#f0c060",glow:"#f0c060bb",rarity:"Godly",        chance:1/250000,  tier:6,tokens:200,nameFR:"Divin",rarityFR:"Divin+"},
+  {name:"Olympian",    emoji:"⚡", color:"#fff080",glow:"#fff080bb",rarity:"Godly",        chance:1/500000,  tier:6,tokens:200,nameFR:"Olympien",rarityFR:"Divin+"},
   // Secret (7) — hidden until found
-  {name:"Mirage",      emoji:"🔮", color:"#20c0a0",glow:"#20c0a099",rarity:"Secret",       chance:1/500000,  tier:7,tokens:500,secret:true},
-  {name:"Eclipse",     emoji:"🌒", color:"#20d060",glow:"#20d06099",rarity:"Secret",       chance:1/750000,  tier:7,tokens:500,secret:true},
-  {name:"Phantom King",emoji:"👁️", color:"#c040ff",glow:"#c040ff99",rarity:"Secret",       chance:1/1000000, tier:7,tokens:500,secret:true},
+  {name:"Mirage",      emoji:"🔮", color:"#20c0a0",glow:"#20c0a099",rarity:"Secret",       chance:1/500000,  tier:7,tokens:500,secret:true,nameFR:"Mirage",rarityFR:"Secret"},
+  {name:"Eclipse",     emoji:"🌒", color:"#20d060",glow:"#20d06099",rarity:"Secret",       chance:1/750000,  tier:7,tokens:500,secret:true,nameFR:"Éclipse",rarityFR:"Secret"},
+  {name:"Phantom King",emoji:"👁️", color:"#c040ff",glow:"#c040ff99",rarity:"Secret",       chance:1/1000000, tier:7,tokens:500,secret:true,nameFR:"Roi Fantôme",rarityFR:"Secret"},
   // Cursed (8)
-  {name:"Cursed",      emoji:"💀", color:"#c02020",glow:"#c0202099",rarity:"Cursed",       chance:1/2000000, tier:8,tokens:1000},
-  {name:"Malice",      emoji:"🩸", color:"#a00000",glow:"#a0000099",rarity:"Cursed",       chance:1/5000000, tier:8,tokens:1000},
-  {name:"Damnation",   emoji:"🔱", color:"#800000",glow:"#80000099",rarity:"Cursed",       chance:1/8000000, tier:8,tokens:1000},
+  {name:"Cursed",      emoji:"💀", color:"#c02020",glow:"#c0202099",rarity:"Cursed",       chance:1/2000000, tier:8,tokens:1000,nameFR:"Maudit",rarityFR:"Maudit"},
+  {name:"Malice",      emoji:"🩸", color:"#a00000",glow:"#a0000099",rarity:"Cursed",       chance:1/5000000, tier:8,tokens:1000,nameFR:"Malveillance",rarityFR:"Maudit"},
+  {name:"Damnation",   emoji:"🔱", color:"#800000",glow:"#80000099",rarity:"Cursed",       chance:1/8000000, tier:8,tokens:1000,nameFR:"Damnation",rarityFR:"Maudit"},
   // Prismatic (9)
-  {name:"Prismatic",   emoji:"🌟", color:"#ff80ff",glow:"#ff80ffbb",rarity:"Prismatic",    chance:1/15000000,tier:9,tokens:2000},
-  {name:"Spectrum",    emoji:"🌈", color:"#80ffff",glow:"#80ffffbb",rarity:"Prismatic",    chance:1/25000000,tier:9,tokens:2000},
+  {name:"Prismatic",   emoji:"🌟", color:"#ff80ff",glow:"#ff80ffbb",rarity:"Prismatic",    chance:1/15000000,tier:9,tokens:2000,nameFR:"Prismatique",rarityFR:"Prismatique"},
+  {name:"Spectrum",    emoji:"🌈", color:"#80ffff",glow:"#80ffffbb",rarity:"Prismatic",    chance:1/25000000,tier:9,tokens:2000,nameFR:"Spectre",rarityFR:"Prismatique"},
   // Transcendent (10)
-  {name:"Transcendence",emoji:"🔱",color:"#ffe0a0",glow:"#ffe0a0cc",rarity:"Transcendent", chance:1/100000000,tier:10,tokens:5000},
+  {name:"Transcendence",emoji:"🔱",color:"#ffe0a0",glow:"#ffe0a0cc",rarity:"Transcendent", chance:1/100000000,tier:10,tokens:5000,nameFR:"Transcendance",rarityFR:"Transcendant"},
 
   // Extra Commons
-  {name:"Muddy",       emoji:"🪨", color:"#a08060",glow:"#a0806044",rarity:"Common",      chance:1/5,       tier:0,tokens:1},
-  {name:"Rainy",       emoji:"🌧️", color:"#7090b0",glow:"#7090b044",rarity:"Common",      chance:1/4,       tier:0,tokens:1},
-  {name:"Leafy",       emoji:"🍃", color:"#50b050",glow:"#50b05044",rarity:"Common",      chance:1/6,       tier:0,tokens:1},
+  {name:"Muddy",       emoji:"🪨", color:"#a08060",glow:"#a0806044",rarity:"Common",      chance:1/5,       tier:0,tokens:1,nameFR:"Muddy",rarityFR:"Commun"},
+  {name:"Rainy",       emoji:"🌧️", color:"#7090b0",glow:"#7090b044",rarity:"Common",      chance:1/4,       tier:0,tokens:1,nameFR:"Rainy",rarityFR:"Commun"},
+  {name:"Leafy",       emoji:"🍃", color:"#50b050",glow:"#50b05044",rarity:"Common",      chance:1/6,       tier:0,tokens:1,nameFR:"Leafy",rarityFR:"Commun"},
   // Extra Uncommons
-  {name:"Lunar",       emoji:"🌙", color:"#c0d0ff",glow:"#c0d0ff44",rarity:"Uncommon",    chance:1/18,      tier:1,tokens:2},
-  {name:"Venom",       emoji:"🐍", color:"#80c020",glow:"#80c02044",rarity:"Uncommon",    chance:1/22,      tier:1,tokens:2},
-  {name:"Blaze",       emoji:"🕯️", color:"#ffa020",glow:"#ffa02044",rarity:"Uncommon",    chance:1/28,      tier:1,tokens:2},
+  {name:"Lunar",       emoji:"🌙", color:"#c0d0ff",glow:"#c0d0ff44",rarity:"Uncommon",    chance:1/18,      tier:1,tokens:2,nameFR:"Lunaire",rarityFR:"Peu commun"},
+  {name:"Venom",       emoji:"🐍", color:"#80c020",glow:"#80c02044",rarity:"Uncommon",    chance:1/22,      tier:1,tokens:2,nameFR:"Venin",rarityFR:"Peu commun"},
+  {name:"Blaze",       emoji:"🕯️", color:"#ffa020",glow:"#ffa02044",rarity:"Uncommon",    chance:1/28,      tier:1,tokens:2,nameFR:"Flamme",rarityFR:"Peu commun"},
   // Extra Rares
-  {name:"Gilded",      emoji:"🪙", color:"#e0a820",glow:"#e0a82055",rarity:"Rare",        chance:1/90,      tier:2,tokens:4},
-  {name:"Verdant",     emoji:"🌲", color:"#20a060",glow:"#20a06055",rarity:"Rare",        chance:1/130,     tier:2,tokens:4},
-  {name:"Templar",     emoji:"⚔️", color:"#c0c0e0",glow:"#c0c0e055",rarity:"Rare",        chance:1/160,     tier:2,tokens:4},
-  {name:"Abyssal Fog", emoji:"🌫️", color:"#6080a0",glow:"#6080a055",rarity:"Rare",        chance:1/110,     tier:2,tokens:4},
+  {name:"Gilded",      emoji:"🪙", color:"#e0a820",glow:"#e0a82055",rarity:"Rare",        chance:1/90,      tier:2,tokens:4,nameFR:"Doré",rarityFR:"Rare"},
+  {name:"Verdant",     emoji:"🌲", color:"#20a060",glow:"#20a06055",rarity:"Rare",        chance:1/130,     tier:2,tokens:4,nameFR:"Verdoyant",rarityFR:"Rare"},
+  {name:"Templar",     emoji:"⚔️", color:"#c0c0e0",glow:"#c0c0e055",rarity:"Rare",        chance:1/160,     tier:2,tokens:4,nameFR:"Templier",rarityFR:"Rare"},
+  {name:"Abyssal Fog", emoji:"🌫️", color:"#6080a0",glow:"#6080a055",rarity:"Rare",        chance:1/110,     tier:2,tokens:4,nameFR:"Brume Abyssale",rarityFR:"Rare"},
   // Extra Epics
-  {name:"Omega",       emoji:"Ω",  color:"#ff4080",glow:"#ff408066",rarity:"Epic",        chance:1/700,     tier:3,tokens:12},
-  {name:"Arcane",      emoji:"🔯", color:"#8080ff",glow:"#8080ff66",rarity:"Epic",        chance:1/850,     tier:3,tokens:12},
-  {name:"Stormborn",   emoji:"🌩️", color:"#70b0ff",glow:"#70b0ff66",rarity:"Epic",        chance:1/650,     tier:3,tokens:12},
-  {name:"Magmatic",    emoji:"🫁", color:"#ff5010",glow:"#ff501066",rarity:"Epic",        chance:1/950,     tier:3,tokens:12},
+  {name:"Omega",       emoji:"Ω",  color:"#ff4080",glow:"#ff408066",rarity:"Epic",        chance:1/700,     tier:3,tokens:12,nameFR:"Oméga",rarityFR:"Épique"},
+  {name:"Arcane",      emoji:"🔯", color:"#8080ff",glow:"#8080ff66",rarity:"Epic",        chance:1/850,     tier:3,tokens:12,nameFR:"Arcane",rarityFR:"Épique"},
+  {name:"Stormborn",   emoji:"🌩️", color:"#70b0ff",glow:"#70b0ff66",rarity:"Epic",        chance:1/650,     tier:3,tokens:12,nameFR:"Né de la Tempête",rarityFR:"Épique"},
+  {name:"Magmatic",    emoji:"🫁", color:"#ff5010",glow:"#ff501066",rarity:"Epic",        chance:1/950,     tier:3,tokens:12,nameFR:"Magmatique",rarityFR:"Épique"},
   // Extra Legendaries
-  {name:"Wraith",      emoji:"👤", color:"#a0c0ff",glow:"#a0c0ff88",rarity:"Legendary",   chance:1/3500,    tier:4,tokens:35},
-  {name:"Phoenix",     emoji:"🦅", color:"#ff8040",glow:"#ff804088",rarity:"Legendary",   chance:1/5500,    tier:4,tokens:35},
-  {name:"Tidal",       emoji:"🌀", color:"#00b0d0",glow:"#00b0d088",rarity:"Legendary",   chance:1/4500,    tier:4,tokens:35},
+  {name:"Wraith",      emoji:"👤", color:"#a0c0ff",glow:"#a0c0ff88",rarity:"Legendary",   chance:1/3500,    tier:4,tokens:35,nameFR:"Spectre",rarityFR:"Légendaire"},
+  {name:"Phoenix",     emoji:"🦅", color:"#ff8040",glow:"#ff804088",rarity:"Legendary",   chance:1/5500,    tier:4,tokens:35,nameFR:"Phénix",rarityFR:"Légendaire"},
+  {name:"Tidal",       emoji:"🌀", color:"#00b0d0",glow:"#00b0d088",rarity:"Legendary",   chance:1/4500,    tier:4,tokens:35,nameFR:"Maréal",rarityFR:"Légendaire"},
   // Extra Divines
-  {name:"Radiant",     emoji:"💠", color:"#e0f0ff",glow:"#e0f0ff99",rarity:"Divine",       chance:1/30000,   tier:5,tokens:90},
-  {name:"Astral",      emoji:"🛸", color:"#a0e0ff",glow:"#a0e0ff99",rarity:"Divine",       chance:1/45000,   tier:5,tokens:90},
+  {name:"Radiant",     emoji:"💠", color:"#e0f0ff",glow:"#e0f0ff99",rarity:"Divine",       chance:1/30000,   tier:5,tokens:90,nameFR:"Radieux",rarityFR:"Divin"},
+  {name:"Astral",      emoji:"🛸", color:"#a0e0ff",glow:"#a0e0ff99",rarity:"Divine",       chance:1/45000,   tier:5,tokens:90,nameFR:"Astral",rarityFR:"Divin"},
   // Extra Godlies
-  {name:"Sovereign",   emoji:"💎", color:"#e8d080",glow:"#e8d080bb",rarity:"Godly",        chance:1/300000,  tier:6,tokens:220},
+  {name:"Sovereign",   emoji:"💎", color:"#e8d080",glow:"#e8d080bb",rarity:"Godly",        chance:1/300000,  tier:6,tokens:220,nameFR:"Souverain",rarityFR:"Divin+"},
   // Extra Secrets
-  {name:"Specter",     emoji:"👾", color:"#40e080",glow:"#40e08099",rarity:"Secret",       chance:1/600000,  tier:7,tokens:600,secret:true},
-  {name:"Rift",        emoji:"🌀", color:"#ff40c0",glow:"#ff40c099",rarity:"Secret",       chance:1/900000,  tier:7,tokens:600,secret:true},
+  {name:"Specter",     emoji:"👾", color:"#40e080",glow:"#40e08099",rarity:"Secret",       chance:1/600000,  tier:7,tokens:600,secret:true,nameFR:"Spectre",rarityFR:"Secret"},
+  {name:"Rift",        emoji:"🌀", color:"#ff40c0",glow:"#ff40c099",rarity:"Secret",       chance:1/900000,  tier:7,tokens:600,secret:true,nameFR:"Faille",rarityFR:"Secret"},
   // Extra Cursed
-  {name:"Plague",      emoji:"🦠", color:"#902020",glow:"#90202099",rarity:"Cursed",       chance:1/3000000, tier:8,tokens:1200},
-  {name:"Despair",     emoji:"😱", color:"#700000",glow:"#70000099",rarity:"Cursed",       chance:1/6000000, tier:8,tokens:1200},
+  {name:"Plague",      emoji:"🦠", color:"#902020",glow:"#90202099",rarity:"Cursed",       chance:1/3000000, tier:8,tokens:1200,nameFR:"Plague",rarityFR:"Maudit"},
+  {name:"Despair",     emoji:"😱", color:"#700000",glow:"#70000099",rarity:"Cursed",       chance:1/6000000, tier:8,tokens:1200,nameFR:"Désespoir",rarityFR:"Maudit"},
   // Extra Prismatic
-  {name:"Kaleidoscope",emoji:"🔆", color:"#ffccff",glow:"#ffccffbb",rarity:"Prismatic",    chance:1/20000000,tier:9,tokens:2500},
+  {name:"Kaleidoscope",emoji:"🔆", color:"#ffccff",glow:"#ffccffbb",rarity:"Prismatic",    chance:1/20000000,tier:9,tokens:2500,nameFR:"Kaléidoscope",rarityFR:"Prismatique"},
 
   // ── MORE COMMONS ──
-  {name:"Misty",       emoji:"🌁", color:"#b0c8d8",glow:"#b0c8d844",rarity:"Common",      chance:1/5,        tier:0,tokens:1},
-  {name:"Icy",         emoji:"🧊", color:"#c0e8ff",glow:"#c0e8ff44",rarity:"Common",      chance:1/6,        tier:0,tokens:1},
-  {name:"Dusty",       emoji:"🌪️", color:"#c0a870",glow:"#c0a87044",rarity:"Common",      chance:1/7,        tier:0,tokens:1},
+  {name:"Misty",       emoji:"🌁", color:"#b0c8d8",glow:"#b0c8d844",rarity:"Common",      chance:1/5,        tier:0,tokens:1,nameFR:"Brumeux",rarityFR:"Commun"},
+  {name:"Icy",         emoji:"🧊", color:"#c0e8ff",glow:"#c0e8ff44",rarity:"Common",      chance:1/6,        tier:0,tokens:1,nameFR:"Glacé",rarityFR:"Commun"},
+  {name:"Dusty",       emoji:"🌪️", color:"#c0a870",glow:"#c0a87044",rarity:"Common",      chance:1/7,        tier:0,tokens:1,nameFR:"Poussiéreux",rarityFR:"Commun"},
 
   // ── MORE UNCOMMONS ──
-  {name:"Thorned",     emoji:"🌵", color:"#60a840",glow:"#60a84044",rarity:"Uncommon",    chance:1/24,       tier:1,tokens:2},
-  {name:"Aqua",        emoji:"💧", color:"#20c0ff",glow:"#20c0ff44",rarity:"Uncommon",    chance:1/20,       tier:1,tokens:2},
-  {name:"Gale",        emoji:"💨", color:"#a0d0e0",glow:"#a0d0e044",rarity:"Uncommon",    chance:1/26,       tier:1,tokens:2},
-  {name:"Smoldering",  emoji:"🪵", color:"#c06030",glow:"#c0603044",rarity:"Uncommon",    chance:1/19,       tier:1,tokens:2},
+  {name:"Thorned",     emoji:"🌵", color:"#60a840",glow:"#60a84044",rarity:"Uncommon",    chance:1/24,       tier:1,tokens:2,nameFR:"Épineux",rarityFR:"Peu commun"},
+  {name:"Aqua",        emoji:"💧", color:"#20c0ff",glow:"#20c0ff44",rarity:"Uncommon",    chance:1/20,       tier:1,tokens:2,nameFR:"Aqua",rarityFR:"Peu commun"},
+  {name:"Gale",        emoji:"💨", color:"#a0d0e0",glow:"#a0d0e044",rarity:"Uncommon",    chance:1/26,       tier:1,tokens:2,nameFR:"Bourrasque",rarityFR:"Peu commun"},
+  {name:"Smoldering",  emoji:"🪵", color:"#c06030",glow:"#c0603044",rarity:"Uncommon",    chance:1/19,       tier:1,tokens:2,nameFR:"Fumant",rarityFR:"Peu commun"},
 
   // ── MORE RARES ──
-  {name:"Vortex",      emoji:"🌀", color:"#4080c0",glow:"#4080c055",rarity:"Rare",        chance:1/85,       tier:2,tokens:4},
-  {name:"Thorium",     emoji:"☢️", color:"#80ff40",glow:"#80ff4055",rarity:"Rare",        chance:1/140,      tier:2,tokens:4},
-  {name:"Lunar Tide",  emoji:"🌊", color:"#6080ff",glow:"#6080ff55",rarity:"Rare",        chance:1/170,      tier:2,tokens:4},
-  {name:"Iron",        emoji:"⚙️", color:"#a0a8b8",glow:"#a0a8b855",rarity:"Rare",        chance:1/95,       tier:2,tokens:4},
-  {name:"Crimson",     emoji:"🌺", color:"#e03040",glow:"#e0304055",rarity:"Rare",        chance:1/115,      tier:2,tokens:4},
+  {name:"Vortex",      emoji:"🌀", color:"#4080c0",glow:"#4080c055",rarity:"Rare",        chance:1/85,       tier:2,tokens:4,nameFR:"Vortex",rarityFR:"Rare"},
+  {name:"Thorium",     emoji:"☢️", color:"#80ff40",glow:"#80ff4055",rarity:"Rare",        chance:1/140,      tier:2,tokens:4,nameFR:"Thorium",rarityFR:"Rare"},
+  {name:"Lunar Tide",  emoji:"🌊", color:"#6080ff",glow:"#6080ff55",rarity:"Rare",        chance:1/170,      tier:2,tokens:4,nameFR:"Marée Lunaire",rarityFR:"Rare"},
+  {name:"Iron",        emoji:"⚙️", color:"#a0a8b8",glow:"#a0a8b855",rarity:"Rare",        chance:1/95,       tier:2,tokens:4,nameFR:"Fer",rarityFR:"Rare"},
+  {name:"Crimson",     emoji:"🌺", color:"#e03040",glow:"#e0304055",rarity:"Rare",        chance:1/115,      tier:2,tokens:4,nameFR:"Cramoisi",rarityFR:"Rare"},
 
   // ── MORE EPICS ──
-  {name:"Shadowflame",emoji:"🕯️",  color:"#8020c0",glow:"#8020c066",rarity:"Epic",        chance:1/680,      tier:3,tokens:12},
-  {name:"Glacius",     emoji:"🏔️", color:"#60d0ff",glow:"#60d0ff66",rarity:"Epic",        chance:1/820,      tier:3,tokens:12},
-  {name:"Netherblade", emoji:"🗡️", color:"#4040e0",glow:"#4040e066",rarity:"Epic",        chance:1/920,      tier:3,tokens:12},
-  {name:"Solarflare",  emoji:"☀️", color:"#ffa000",glow:"#ffa00066",rarity:"Epic",        chance:1/760,      tier:3,tokens:12},
-  {name:"Voidwalker",  emoji:"👁️", color:"#600080",glow:"#60008066",rarity:"Epic",        chance:1/1050,     tier:3,tokens:12},
+  {name:"Shadowflame",emoji:"🕯️",  color:"#8020c0",glow:"#8020c066",rarity:"Epic",        chance:1/680,      tier:3,tokens:12,nameFR:"Flamme d'Ombre",rarityFR:"Épique"},
+  {name:"Glacius",     emoji:"🏔️", color:"#60d0ff",glow:"#60d0ff66",rarity:"Epic",        chance:1/820,      tier:3,tokens:12,nameFR:"Glacius",rarityFR:"Épique"},
+  {name:"Netherblade", emoji:"🗡️", color:"#4040e0",glow:"#4040e066",rarity:"Epic",        chance:1/920,      tier:3,tokens:12,nameFR:"Lame du Néant",rarityFR:"Épique"},
+  {name:"Solarflare",  emoji:"☀️", color:"#ffa000",glow:"#ffa00066",rarity:"Epic",        chance:1/760,      tier:3,tokens:12,nameFR:"Éruption Solaire",rarityFR:"Épique"},
+  {name:"Voidwalker",  emoji:"👁️", color:"#600080",glow:"#60008066",rarity:"Epic",        chance:1/1050,     tier:3,tokens:12,nameFR:"Marcheur du Vide",rarityFR:"Épique"},
 
   // ── MORE LEGENDARIES ──
-  {name:"Stardust",    emoji:"✨", color:"#e0c0ff",glow:"#e0c0ff88",rarity:"Legendary",   chance:1/3000,     tier:4,tokens:35},
-  {name:"Leviathan",   emoji:"🐋", color:"#0060c0",glow:"#0060c088",rarity:"Legendary",   chance:1/5800,     tier:4,tokens:35},
-  {name:"Inferno King",emoji:"🔥", color:"#ff4000",glow:"#ff400088",rarity:"Legendary",   chance:1/6500,     tier:4,tokens:35},
-  {name:"Tempest Lord",emoji:"⛈️", color:"#60a0ff",glow:"#60a0ff88",rarity:"Legendary",   chance:1/4200,     tier:4,tokens:35},
+  {name:"Stardust",    emoji:"✨", color:"#e0c0ff",glow:"#e0c0ff88",rarity:"Legendary",   chance:1/3000,     tier:4,tokens:35,nameFR:"Poussière d'Étoile",rarityFR:"Légendaire"},
+  {name:"Leviathan",   emoji:"🐋", color:"#0060c0",glow:"#0060c088",rarity:"Legendary",   chance:1/5800,     tier:4,tokens:35,nameFR:"Léviathan",rarityFR:"Légendaire"},
+  {name:"Inferno King",emoji:"🔥", color:"#ff4000",glow:"#ff400088",rarity:"Legendary",   chance:1/6500,     tier:4,tokens:35,nameFR:"Roi des Enfers",rarityFR:"Légendaire"},
+  {name:"Tempest Lord",emoji:"⛈️", color:"#60a0ff",glow:"#60a0ff88",rarity:"Legendary",   chance:1/4200,     tier:4,tokens:35,nameFR:"Seigneur des Tempêtes",rarityFR:"Légendaire"},
 
   // ── MORE DIVINES ──
-  {name:"Solaris",     emoji:"🌞", color:"#ffffc0",glow:"#ffffc099",rarity:"Divine",       chance:1/28000,    tier:5,tokens:90},
-  {name:"Moonweaver",  emoji:"🌙", color:"#c0c0ff",glow:"#c0c0ff99",rarity:"Divine",       chance:1/42000,    tier:5,tokens:90},
-  {name:"Nebula",      emoji:"🌌", color:"#c080ff",glow:"#c080ff99",rarity:"Divine",       chance:1/38000,    tier:5,tokens:90},
+  {name:"Solaris",     emoji:"🌞", color:"#ffffc0",glow:"#ffffc099",rarity:"Divine",       chance:1/28000,    tier:5,tokens:90,nameFR:"Solaris",rarityFR:"Divin"},
+  {name:"Moonweaver",  emoji:"🌙", color:"#c0c0ff",glow:"#c0c0ff99",rarity:"Divine",       chance:1/42000,    tier:5,tokens:90,nameFR:"Tisseuse de Lune",rarityFR:"Divin"},
+  {name:"Nebula",      emoji:"🌌", color:"#c080ff",glow:"#c080ff99",rarity:"Divine",       chance:1/38000,    tier:5,tokens:90,nameFR:"Nébuleuse",rarityFR:"Divin"},
 
   // ── MORE GODLIES ──
-  {name:"Apex",        emoji:"🔺", color:"#ffd060",glow:"#ffd060bb",rarity:"Godly",        chance:1/400000,   tier:6,tokens:250},
-  {name:"Titan",       emoji:"⚡", color:"#e0e080",glow:"#e0e080bb",rarity:"Godly",        chance:1/600000,   tier:6,tokens:250},
+  {name:"Apex",        emoji:"🔺", color:"#ffd060",glow:"#ffd060bb",rarity:"Godly",        chance:1/400000,   tier:6,tokens:250,nameFR:"Apex",rarityFR:"Divin+"},
+  {name:"Titan",       emoji:"⚡", color:"#e0e080",glow:"#e0e080bb",rarity:"Godly",        chance:1/600000,   tier:6,tokens:250,nameFR:"Titan",rarityFR:"Divin+"},
 
   // ── MORE SECRETS ──
-  {name:"Phantom Rift",emoji:"🌀", color:"#00ffc0",glow:"#00ffc099",rarity:"Secret",       chance:1/800000,   tier:7,tokens:700,secret:true},
-  {name:"Wraith King", emoji:"💀", color:"#8060ff",glow:"#8060ff99",rarity:"Secret",       chance:1/1200000,  tier:7,tokens:700,secret:true},
+  {name:"Phantom Rift",emoji:"🌀", color:"#00ffc0",glow:"#00ffc099",rarity:"Secret",       chance:1/800000,   tier:7,tokens:700,secret:true,nameFR:"Faille Fantôme",rarityFR:"Secret"},
+  {name:"Wraith King", emoji:"💀", color:"#8060ff",glow:"#8060ff99",rarity:"Secret",       chance:1/1200000,  tier:7,tokens:700,secret:true,nameFR:"Roi Spectre",rarityFR:"Secret"},
 
   // ── MORE CURSED ──
-  {name:"Abomination", emoji:"🧟", color:"#803030",glow:"#80303099",rarity:"Cursed",       chance:1/4000000,  tier:8,tokens:1500},
-  {name:"Corruption",  emoji:"🕸️", color:"#602020",glow:"#60202099",rarity:"Cursed",       chance:1/7000000,  tier:8,tokens:1500},
-  {name:"Anguish",     emoji:"😰", color:"#500000",glow:"#50000099",rarity:"Cursed",       chance:1/10000000, tier:8,tokens:1500},
+  {name:"Abomination", emoji:"🧟", color:"#803030",glow:"#80303099",rarity:"Cursed",       chance:1/4000000,  tier:8,tokens:1500,nameFR:"Abomination",rarityFR:"Maudit"},
+  {name:"Corruption",  emoji:"🕸️", color:"#602020",glow:"#60202099",rarity:"Cursed",       chance:1/7000000,  tier:8,tokens:1500,nameFR:"Corruption",rarityFR:"Maudit"},
+  {name:"Anguish",     emoji:"😰", color:"#500000",glow:"#50000099",rarity:"Cursed",       chance:1/10000000, tier:8,tokens:1500,nameFR:"Angoisse",rarityFR:"Maudit"},
 
   // ── MORE PRISMATIC ──
-  {name:"Aurora Prism",emoji:"🌈", color:"#ff60ff",glow:"#ff60ffbb",rarity:"Prismatic",    chance:1/18000000, tier:9,tokens:2500},
-  {name:"Chromatic",   emoji:"💫", color:"#ffff80",glow:"#ffff80bb",rarity:"Prismatic",    chance:1/30000000, tier:9,tokens:2500},
+  {name:"Aurora Prism",emoji:"🌈", color:"#ff60ff",glow:"#ff60ffbb",rarity:"Prismatic",    chance:1/18000000, tier:9,tokens:2500,nameFR:"Prisme Aurore",rarityFR:"Prismatique"},
+  {name:"Chromatic",   emoji:"💫", color:"#ffff80",glow:"#ffff80bb",rarity:"Prismatic",    chance:1/30000000, tier:9,tokens:2500,nameFR:"Chromatique",rarityFR:"Prismatique"},
 
   // ── MORE TRANSCENDENT ──
-  {name:"Axiom",       emoji:"🔮", color:"#ffc080",glow:"#ffc080cc",rarity:"Transcendent", chance:1/150000000,tier:10,tokens:6000},
-  {name:"Eternity",    emoji:"♾️", color:"#e0d0a0",glow:"#e0d0a0cc",rarity:"Transcendent", chance:1/200000000,tier:10,tokens:6000},
+  {name:"Axiom",       emoji:"🔮", color:"#ffc080",glow:"#ffc080cc",rarity:"Transcendent", chance:1/150000000,tier:10,tokens:6000,nameFR:"Axiome",rarityFR:"Transcendant"},
+  {name:"Eternity",    emoji:"♾️", color:"#e0d0a0",glow:"#e0d0a0cc",rarity:"Transcendent", chance:1/200000000,tier:10,tokens:6000,nameFR:"Éternité",rarityFR:"Transcendant"},
 
   // ── MORE NULL ──
-  {name:"Void Null",   emoji:"🕳️", color:"#707070",glow:"#70707099",rarity:"Null",          chance:1/2000000000,tier:11,tokens:15000},
+  {name:"Void Null",   emoji:"🕳️", color:"#707070",glow:"#70707099",rarity:"Null",          chance:1/2000000000,tier:11,tokens:15000,nameFR:"Néant Nul",rarityFR:"Nul"},
 
   // ════════════════════════════════════
   //  TIER 12 — OMEGA  (1 in 10 billion)
   // ════════════════════════════════════
-  {name:"Omega",       emoji:"Ω",  color:"#ff2080",glow:"#ff2080dd",rarity:"Omega",         chance:1/10000000000, tier:12,tokens:25000},
-  {name:"Singularity", emoji:"🌑", color:"#400080",glow:"#400080dd",rarity:"Omega",         chance:1/25000000000, tier:12,tokens:25000},
-  {name:"Cataclysm",   emoji:"☄️", color:"#ff6020",glow:"#ff6020dd",rarity:"Omega",         chance:1/15000000000, tier:12,tokens:25000},
+  {name:"Omega",       emoji:"Ω",  color:"#ff2080",glow:"#ff2080dd",rarity:"Omega",         chance:1/10000000000, tier:12,tokens:25000,nameFR:"Oméga",rarityFR:"Oméga"},
+  {name:"Singularity", emoji:"🌑", color:"#400080",glow:"#400080dd",rarity:"Omega",         chance:1/25000000000, tier:12,tokens:25000,nameFR:"Singularité",rarityFR:"Oméga"},
+  {name:"Cataclysm",   emoji:"☄️", color:"#ff6020",glow:"#ff6020dd",rarity:"Omega",         chance:1/15000000000, tier:12,tokens:25000,nameFR:"Cataclysme",rarityFR:"Oméga"},
 
   // ════════════════════════════════════
   //  TIER 13 — ETERNAL (1 in 1 trillion)
   // ════════════════════════════════════
-  {name:"Eternal",     emoji:"🌀", color:"#80ffff",glow:"#80ffffee",rarity:"Eternal",        chance:1/1000000000000, tier:13,tokens:100000},
-  {name:"Infinite",    emoji:"∞",  color:"#ffffff",glow:"#ffffffee",rarity:"Eternal",        chance:1/5000000000000, tier:13,tokens:100000},
-  {name:"Omniscient",  emoji:"👁️", color:"#c0ffc0",glow:"#c0ffc0ee",rarity:"Eternal",        chance:1/2000000000000, tier:13,tokens:100000},
+  {name:"Eternal",     emoji:"🌀", color:"#80ffff",glow:"#80ffffee",rarity:"Eternal",        chance:1/1000000000000, tier:13,tokens:100000,nameFR:"Éternel",rarityFR:"Éternel"},
+  {name:"Infinite",    emoji:"∞",  color:"#ffffff",glow:"#ffffffee",rarity:"Eternal",        chance:1/5000000000000, tier:13,tokens:100000,nameFR:"Infini",rarityFR:"Éternel"},
+  {name:"Omniscient",  emoji:"👁️", color:"#c0ffc0",glow:"#c0ffc0ee",rarity:"Eternal",        chance:1/2000000000000, tier:13,tokens:100000,nameFR:"Omniscient",rarityFR:"Éternel"},
 
   // ════════════════════════════════════
   //  TIER 14 — GENESIS (1 in 1 quadrillion) THE RAREST
   // ════════════════════════════════════
-  {name:"Genesis",     emoji:"🌟", color:"#ffff00",glow:"#ffff00ff",rarity:"Genesis",        chance:1/1000000000000000, tier:14,tokens:500000},
+  {name:"Genesis",     emoji:"🌟", color:"#ffff00",glow:"#ffff00ff",rarity:"Genesis",        chance:1/1000000000000000, tier:14,tokens:500000,nameFR:"Genèse",rarityFR:"Genèse"},
 
   // Original Null
-  {name:"Null",        emoji:"⬛", color:"#909090",glow:"#90909099",rarity:"Null",          chance:1/1000000000,tier:11,tokens:10000},
+  {name:"Null",        emoji:"⬛", color:"#909090",glow:"#90909099",rarity:"Null",          chance:1/1000000000,tier:11,tokens:10000,nameFR:"Nul",rarityFR:"Nul"},
 ];
 const totalW=AURAS.reduce((s,a)=>s+a.chance,0);
 AURAS.forEach(a=>a.weight=a.chance/totalW);
@@ -683,23 +760,53 @@ function rollAura(){
   for(const a of pool){cum+=a.ew;if(r<cum)return a;}
   return AURAS[0];
 }
-function fmt(a){return'1 in '+Math.round(1/a.chance).toLocaleString();}
+// fmt() replaced by fmtOdds()
 
 function addTokens(n){tokens+=n;totalTokensEarned+=n;document.getElementById('token-count').textContent=tokens.toLocaleString();document.getElementById('stat-tokens-earned').textContent=totalTokensEarned.toLocaleString();}
 
+const LOG_VISIBLE=25,LOG_HIDDEN=25,LOG_MAX=LOG_VISIBLE+LOG_HIDDEN;
+const logEntries=[]; // {html, color, emoji, nm, rarity, odds}
+let logExpanded=false;
+
 function addLog(aura){
-  const box=document.getElementById('log-box'),entry=document.createElement('div');entry.className='log-entry';
   const now=new Date(),t=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-  const nm=aura.secret&&!inventory[aura.name]?'???':aura.name;
-  entry.innerHTML=`<span class="log-time">${t}</span>&nbsp;<span style="color:${aura.color}">${aura.emoji} ${nm}</span>&nbsp;<span style="color:var(--muted);font-size:.62rem">${aura.rarity} · ${fmt(aura)}</span>`;
-  box.prepend(entry);while(box.children.length>60)box.lastChild.remove();
+  const nm=aura.secret&&!inventory[aura.name]?'???':auraName(aura);
+  logEntries.unshift({t,color:aura.color,emoji:aura.emoji,nm,rarity:auraRarity(aura),odds:fmtOdds(aura)});
+  if(logEntries.length>LOG_MAX)logEntries.length=LOG_MAX;
+  renderLog();
+}
+
+function renderLog(){
+  const box=document.getElementById('log-box');
+  const visible=logEntries.slice(0,LOG_VISIBLE);
+  const hidden=logEntries.slice(LOG_VISIBLE);
+  box.innerHTML='';
+  visible.forEach(e=>{
+    const row=document.createElement('div');row.className='log-entry';
+    row.innerHTML=`<span class="log-time">${e.t}</span>&nbsp;<span style="color:${e.color}">${e.emoji} ${e.nm}</span>&nbsp;<span style="color:var(--muted);font-size:.62rem">${e.rarity} · ${e.odds}</span>`;
+    box.appendChild(row);
+  });
+  if(hidden.length>0){
+    const tog=document.createElement('div');
+    tog.style.cssText='text-align:center;padding:4px;cursor:pointer;color:var(--muted);font-size:.68rem;font-family:Cinzel,serif;letter-spacing:.1em;border-top:1px solid var(--border);margin-top:4px;';
+    tog.textContent=logExpanded?(isFR?'▲ Masquer':'▲ Hide earlier'):(isFR?`▼ ${hidden.length} rolls précédents`:`▼ ${hidden.length} earlier rolls`);
+    tog.addEventListener('click',()=>{logExpanded=!logExpanded;renderLog();});
+    box.appendChild(tog);
+    if(logExpanded){
+      hidden.forEach(e=>{
+        const row=document.createElement('div');row.className='log-entry';row.style.opacity='.6';
+        row.innerHTML=`<span class="log-time">${e.t}</span>&nbsp;<span style="color:${e.color}">${e.emoji} ${e.nm}</span>&nbsp;<span style="color:var(--muted);font-size:.62rem">${e.rarity} · ${e.odds}</span>`;
+        box.appendChild(row);
+      });
+    }
+  }
 }
 
 function showLucky(aura){
   const ol=document.getElementById('lucky-overlay'),card=document.getElementById('lucky-card');
   document.getElementById('lucky-emoji').textContent=aura.emoji;
-  document.getElementById('lucky-title').textContent=aura.name;
-  document.getElementById('lucky-rarity').textContent=`${aura.rarity} · ${fmt(aura)}`;
+  document.getElementById('lucky-title').textContent=auraName(aura);
+  document.getElementById('lucky-rarity').textContent=`${auraRarity(aura)} · ${fmtOdds(aura)}`;
   document.getElementById('lucky-token-reward').textContent=`+${aura.tokens} 🪙`;
   card.style.setProperty('--aura-color',aura.color);card.style.setProperty('--aura-glow',aura.glow);
   ol.classList.add('show');if(autoInterval)toggleAuto();
@@ -726,10 +833,11 @@ function doRoll(){
       playSound(aura.tier);
       const isFirstDiscover=!inventory[aura.name];
       inventory[aura.name]=(inventory[aura.name]||0)+1;
-      addLog(aura);updateCollection();
+      addLog(aura);
+      if(isFirstDiscover)markCollectionDirty(); else if(document.getElementById('tab-collection').classList.contains('active')){const existing=[...document.getElementById('inv-grid').querySelectorAll('.ic-name')].find(el=>el.textContent===aura.name);if(existing){const cnt=existing.closest('.inv-card').querySelector('.ic-count');if(cnt)cnt.textContent='×'+inventory[aura.name];}}
       document.getElementById('stat-rolls').textContent=rolls.toLocaleString();
       document.getElementById('stat-unique').textContent=Object.keys(inventory).length;
-      if(aura.tier>rarestTier){rarestTier=aura.tier;const el=document.getElementById('stat-rarest');el.innerHTML=`<span style="color:${aura.color}">${aura.emoji} ${aura.name}</span><div style="font-size:.6rem;color:var(--muted);font-family:Cinzel,serif;letter-spacing:.1em;margin-top:1px">${aura.rarity} · ${fmt(aura)}</div>`;el.style.fontSize='.85rem';}
+      if(aura.tier>rarestTier){rarestTier=aura.tier;const el=document.getElementById('stat-rarest');el.innerHTML=`<span style="color:${aura.color}">${aura.emoji} ${auraName(aura)}</span><div style="font-size:.6rem;color:var(--muted);font-family:Cinzel,serif;letter-spacing:.1em;margin-top:1px">${auraRarity(aura)} · ${fmtOdds(aura)}</div>`;el.style.fontSize='.85rem';}
       if(aura.tokens>0)addTokens(aura.tokens);
       if(isFirstDiscover){
         if(aura.tier>=2){
@@ -753,10 +861,10 @@ function setDisplay(aura,final){
   const ri=document.getElementById('ring-inner');
   ri.textContent=aura.emoji;
   ri.style.cssText=`background:radial-gradient(circle,${aura.color}55 0%,#05050a 70%);box-shadow:0 0 40px ${aura.glow} inset,0 0 60px ${aura.glow};font-size:3.2rem;`;
-  document.getElementById('aura-name').textContent=aura.name;
+  document.getElementById('aura-name').textContent=auraName(aura);
   document.getElementById('aura-name').style.color=aura.color;
   document.getElementById('aura-name').style.textShadow=`0 0 20px ${aura.glow}`;
-  document.getElementById('aura-rarity').textContent=final?`${aura.rarity} · ${fmt(aura)}`:'...';
+  document.getElementById('aura-rarity').textContent=final?`${auraRarity(aura)} · ${fmtOdds(aura)}`:'...';
   document.getElementById('ring-outer').style.background=`conic-gradient(from 0deg,${aura.color},transparent,${aura.color}) border-box`;
   if(final&&aura.tier>=3){document.getElementById('aura-ring').classList.add('ringing');setTimeout(()=>document.getElementById('aura-ring').classList.remove('ringing'),2200);}
   if(final&&aura.tier===9)ri.animate([{filter:'hue-rotate(0deg)'},{filter:'hue-rotate(360deg)'}],{duration:1800,iterations:Infinity});
@@ -764,17 +872,23 @@ function setDisplay(aura,final){
 
 function toggleAuto(){
   const btn=document.getElementById('auto-btn');
-  if(autoInterval){clearInterval(autoInterval);autoInterval=null;btn.classList.remove('active');btn.textContent='Auto Roll';}
-  else{btn.classList.add('active');btn.textContent='⏸ Stop';autoInterval=setInterval(()=>{if(!isRolling&&!document.getElementById('lucky-overlay').classList.contains('show'))doRoll();},Math.max(80,getSpeed()));}
+  if(autoInterval){clearInterval(autoInterval);autoInterval=null;btn.classList.remove('active');btn.textContent=T.autoBtn;}
+  else{btn.classList.add('active');btn.textContent=T.autoStop;autoInterval=setInterval(()=>{if(!isRolling&&!document.getElementById('lucky-overlay').classList.contains('show'))doRoll();},Math.max(80,getSpeed()));}
 }
 
 // ══════════════════
 //  COLLECTION
 // ══════════════════
+let collectionDirty=true;
+function markCollectionDirty(){
+  collectionDirty=true;
+  if(document.getElementById('tab-collection').classList.contains('active'))updateCollection();
+}
 function updateCollection(){
+  collectionDirty=false;
   const grid=document.getElementById('inv-grid');grid.innerHTML='';
-  const keys=Object.keys(inventory).sort((a,b)=>{const A=AURAS.find(x=>x.name===a),B=AURAS.find(x=>x.name===b);return B.tier-A.tier;});
-  if(!keys.length){grid.innerHTML='<div style="color:var(--muted);font-size:.82rem;grid-column:1/-1;text-align:center;padding:30px;font-family:Cinzel,serif;">No auras discovered yet...</div>';return;}
+  const keys=Object.keys(inventory).sort((a,b)=>{const A=AURAS.find(x=>x.name===a),B=AURAS.find(x=>x.name===b);if(B.tier!==A.tier)return B.tier-A.tier;return A.chance-B.chance;});
+  if(!keys.length){grid.innerHTML='<div style="color:var(--muted);font-size:.82rem;grid-column:1/-1;text-align:center;padding:30px;font-family:Cinzel,serif;"><span data-i18n="noAuras">No auras discovered yet...</span></div>';return;}
   for(const name of keys){
     const au=AURAS.find(a=>a.name===name);
     const card=document.createElement('div');
@@ -786,15 +900,15 @@ function updateCollection(){
     // emoji
     const em=document.createElement('div');em.className='ic-emoji';em.textContent=au.emoji;
     // name
-    const nm=document.createElement('div');nm.className='ic-name';nm.textContent=au.name;
+    const nm=document.createElement('div');nm.className='ic-name';nm.textContent=auraName(au);
     // rarity
-    const rar=document.createElement('div');rar.className='ic-rarity';rar.style.color=au.color;rar.style.opacity='.85';rar.textContent=au.rarity;
+    const rar=document.createElement('div');rar.className='ic-rarity';rar.style.color=au.color;rar.style.opacity='.85';rar.textContent=auraRarity(au);
     // odds
-    const odds=document.createElement('div');odds.className='ic-rarity';odds.textContent=fmt(au);
+    const odds=document.createElement('div');odds.className='ic-rarity';odds.textContent=fmtOdds(au);
     // replay button
     const rep=document.createElement('button');
     rep.className='ic-replay';
-    rep.textContent='▶ Replay';
+    rep.textContent=T.replayBtn;
     rep.addEventListener('click',function(e){e.stopPropagation();showCutscene(au,true);});
     card.append(cnt,em,nm,rar,odds,rep);
     grid.appendChild(card);
@@ -817,7 +931,7 @@ function buildShopCard(eq, mini=false){
   const info=document.createElement('div');
   const nm=document.createElement('div'); nm.className='sc-name'; nm.textContent=eq.name;
   const tp=document.createElement('div'); tp.className='sc-type';
-  tp.textContent=mini?(isEq?'⚡ EQUIPPED':'Owned'):'Equipment';
+  tp.textContent=mini?(isEq?T.equippedLabel:T.shopOwned.replace('✔ ','Owned')):T.shopType;
   info.append(nm,tp); top.append(icon,info); card.appendChild(top);
 
   if(!mini){
@@ -832,37 +946,45 @@ function buildShopCard(eq, mini=false){
 
   if(!mini){
     const price=document.createElement('div'); price.className='sc-price';
-    price.textContent=owned?'✔ Owned':'🪙 '+eq.price.toLocaleString();
+    price.textContent=owned?T.shopOwned:'🪙 '+eq.price.toLocaleString();
     footer.appendChild(price);
   } else {
     footer.appendChild(document.createElement('div')); // spacer
   }
 
-  const btn=document.createElement('button');
-  btn.className='sc-buy-btn';
-  if(owned && isEq)  btn.classList.add('equipped-btn');
-  else if(owned)     btn.classList.add('owned');
-  btn.textContent = owned ? (isEq?'Unequip':'Equip') : 'Buy';
-  if(!mini && !owned && !canAfford) btn.disabled=true;
-
-  btn.addEventListener('click', function(e){
-    e.stopPropagation();
-    if(!ownedEquip.has(eq.id)){
-      if(tokens<eq.price){showToast('Not enough tokens! 🪙');return;}
-      tokens-=eq.price;
-      document.getElementById('token-count').textContent=tokens.toLocaleString();
-      ownedEquip.add(eq.id);
-      try{SFX.buy();}catch(err){}
-      showToast(eq.icon+' '+eq.name+' purchased!');
-      saveGame();
-      renderShop(); renderEquipTab();
-    } else {
-      if(equippedItems.includes(eq.id)) unequipItem(eq.id);
-      else equipItem(eq.id);
+  if(!mini){
+    // Shop view: Buy button only (no equip/unequip)
+    if(!owned){
+      const btn=document.createElement('button');
+      btn.className='sc-buy-btn';
+      btn.textContent=T.shopBuy;
+      if(!canAfford)btn.disabled=true;
+      btn.addEventListener('click',function(e){
+        e.stopPropagation();
+        if(tokens<eq.price){showToast(T.notEnough);return;}
+        tokens-=eq.price;
+        document.getElementById('token-count').textContent=tokens.toLocaleString();
+        ownedEquip.add(eq.id);
+        try{SFX.buy();}catch(err){}
+        showToast(eq.icon+' '+eq.name+(isFR?' acheté !':' purchased!'));
+        saveGame();
+        renderShop();renderEquipTab();
+      });
+      footer.appendChild(btn);
     }
-  });
-
-  footer.appendChild(btn);
+    // owned: no button, price div already says "✔ Owned"
+  } else {
+    // Equipment tab mini card: equip/unequip button
+    const btn=document.createElement('button');
+    btn.className='sc-buy-btn';
+    if(isEq) btn.classList.add('equipped-btn'); else btn.classList.add('owned');
+    btn.textContent=isEq?T.shopUnequip:T.shopEquip;
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(isEq)unequipItem(eq.id); else equipItem(eq.id);
+    });
+    footer.appendChild(btn);
+  }
   card.appendChild(footer);
   return card;
 }
@@ -877,16 +999,16 @@ function renderShop(){
 // ══════════════════
 function equipItem(id){
   if(equippedItems.includes(id)){unequipItem(id);return;}
-  const slot=equippedItems.indexOf(null);if(slot===-1){showToast('All 4 slots full! Remove something first.');return;}
-  equippedItems[slot]=id;updateHUD();renderEquipTab();renderShop();renderArenaEquipped();
+  const slot=equippedItems.indexOf(null);if(slot===-1){showToast(T.slotsFullMsg);return;}
+  equippedItems[slot]=id;updateHUD();renderEquipTab();renderShop();renderArenaEquipped();markCollectionDirty();
   if(autoInterval){clearInterval(autoInterval);autoInterval=setInterval(()=>{if(!isRolling&&!document.getElementById('lucky-overlay').classList.contains('show'))doRoll();},Math.max(80,getSpeed()));}
-  const eq=EQUIPMENT.find(e=>e.id===id);saveGame();showToast(`${eq.icon} ${eq.name} equipped!`);
+  const eq=EQUIPMENT.find(e=>e.id===id);saveGame();showToast(eq.icon+' '+eq.name+T.equipped);
 }
 function unequipItem(id){
   const i=equippedItems.indexOf(id);if(i>-1)equippedItems[i]=null;
   updateHUD();renderEquipTab();renderShop();renderArenaEquipped();
   if(autoInterval){clearInterval(autoInterval);autoInterval=setInterval(()=>{if(!isRolling&&!document.getElementById('lucky-overlay').classList.contains('show'))doRoll();},Math.max(80,getSpeed()));}
-  const eq=EQUIPMENT.find(e=>e.id===id);saveGame();showToast(`${eq.icon} ${eq.name} unequipped.`);
+  const eq=EQUIPMENT.find(e=>e.id===id);saveGame();showToast(eq.icon+' '+eq.name+T.unequipped);
 }
 
 function renderEquipTab(){
@@ -900,7 +1022,7 @@ function renderEquipTab(){
       const eIcon=document.createElement('div');eIcon.style.fontSize='1.7rem';eIcon.textContent=eq.icon;
       const eName=document.createElement('div');eName.style.cssText=`font-family:Cinzel,serif;font-size:.62rem;color:${eq.color}`;eName.textContent=eq.name;
       const rmBtn=document.createElement('button');
-      rmBtn.textContent='Remove';
+      rmBtn.textContent=T.removeBtn;
       rmBtn.style.cssText='margin-top:6px;background:transparent;border:1px solid #444;color:var(--muted);font-size:.6rem;padding:4px 10px;border-radius:10px;cursor:pointer;font-family:Rajdhani,sans-serif;min-height:30px;touch-action:manipulation;';
       rmBtn.addEventListener('click',function(e){e.stopPropagation();unequipItem(id);});
       sl.append(eIcon,eName,rmBtn);
@@ -909,7 +1031,7 @@ function renderEquipTab(){
     sEl.appendChild(sl);
   }
   const og=document.getElementById('owned-grid');og.innerHTML='';
-  if(!ownedEquip.size){og.innerHTML='<div style="color:var(--muted);font-size:.82rem;text-align:center;padding:20px;font-family:Cinzel,serif;">No equipment owned. Buy from the Shop tab!</div>';return;}
+  if(!ownedEquip.size){og.innerHTML=`<div style="color:var(--muted);font-size:.82rem;text-align:center;padding:20px;font-family:Cinzel,serif;">${T.noEquip}</div>`;return;}
   for(const id of ownedEquip){const eq=EQUIPMENT.find(e=>e.id===id);og.appendChild(buildShopCard(eq,true));}
 }
 
@@ -928,7 +1050,7 @@ function switchTab(name){
   document.getElementById('tab-'+name).classList.add('active');
   if(name==='shop')renderShop();
   if(name==='equipment')renderEquipTab();
-  if(name==='collection')updateCollection();
+  if(name==='collection'){if(collectionDirty)updateCollection();}
 }
 
 // ══════════════════
@@ -1041,14 +1163,14 @@ function showCutscene(aura, isReplay=false){
   // text
   document.getElementById('cs-label').textContent=cfg.label;
   document.getElementById('cs-label').style.color=c;
-  document.getElementById('cs-name').textContent=aura.name;
+  document.getElementById('cs-name').textContent=auraName(aura);
   document.getElementById('cs-name').style.color=c;
   document.getElementById('cs-name').style.textShadow=`0 0 40px ${g},0 0 80px ${g}`;
-  document.getElementById('cs-rarity-badge').textContent=aura.rarity;
+  document.getElementById('cs-rarity-badge').textContent=auraRarity(aura);
   document.getElementById('cs-rarity-badge').style.color=c;
   document.getElementById('cs-rarity-badge').style.borderColor=c;
   document.getElementById('cs-rarity-badge').style.background=c+'18';
-  document.getElementById('cs-odds').textContent=fmt(aura);
+  document.getElementById('cs-odds').textContent=fmtOdds(aura);
 
   // prismatic rainbow ring animation
   if(aura.tier===9){
@@ -1101,6 +1223,7 @@ function saveGame(){
   try{
     const data={
       rolls,tokens,totalTokensEarned,baseLuck,rarestTier,
+      logEntries:logEntries.slice(0,LOG_MAX),
       inventory:{...inventory},
       ownedEquip:[...ownedEquip],
       equippedItems:[...equippedItems],
@@ -1125,6 +1248,7 @@ function loadGame(){
     baseLuck=d.baseLuck||1;
     rarestTier=d.rarestTier??-1;
     Object.assign(inventory,d.inventory||{});
+    if(d.logEntries&&Array.isArray(d.logEntries)){logEntries.length=0;d.logEntries.forEach(e=>logEntries.push(e));renderLog();}
     (d.ownedEquip||[]).forEach(id=>ownedEquip.add(id));
     (d.equippedItems||[]).forEach((id,i)=>{equippedItems[i]=id||null;});
     // Update stat elements
@@ -1136,7 +1260,7 @@ function loadGame(){
     updateHUD();
     updateCollection();
     renderArenaEquipped();
-    showToast('💾 Save loaded!');
+    showToast(T.saveLoaded);
   }catch(e){console.warn('Load failed',e);}
 }
 
@@ -1144,6 +1268,7 @@ function loadGame(){
 loadGame();
 renderArenaEquipped();
 updateHUD();
+applyI18n();
 
 // Keyboard
 document.addEventListener('keydown',e=>{
